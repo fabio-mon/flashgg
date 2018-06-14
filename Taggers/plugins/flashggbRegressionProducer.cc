@@ -192,7 +192,7 @@ namespace flashgg {
             Jet_mt = sqrt(fjet.correctedJet("Uncorrected").energy()*fjet.correctedJet("Uncorrected").energy()-fjet.correctedJet("Uncorrected").pz()*fjet.correctedJet("Uncorrected").pz());
 
             //this max probably not needed, it's just heppy
-            Jet_leptonPtRel = std::max(float(0.),fjet.userFloat("softLepPtRel"))*Jet_pt/fjet.pt();
+            Jet_leptonPtRel = std::max(float(0.),fjet.userFloat("softLepPtRel"));
             Jet_leptonDeltaR = std::max(float(0.),fjet.userFloat("softLepDr"));
             Jet_neHEF = fjet.neutralHadronEnergyFraction();
             Jet_neEmEF = fjet.neutralEmEnergyFraction();
@@ -216,7 +216,7 @@ namespace flashgg {
 //                float vertexY=fjet.userFloat("vtxPosY")-fjet.userFloat("vtxPy");                
 //                Jet_vtxPt = sqrt(vertexX*vertexX+vertexY*vertexY);
                 Jet_vtxPt=sqrt(fjet.userFloat("vtxPx")*fjet.userFloat("vtxPx")+fjet.userFloat("vtxPy")*fjet.userFloat("vtxPy"));
-                Jet_vtxMass = std::max(float(0.),fjet.correctedJet("Uncorrected").userFloat("vtxMass"));
+                Jet_vtxMass = std::max(float(0.),fjet.userFloat("vtxMass"));
                 Jet_vtx3dL = std::max(float(0.),fjet.userFloat("vtx3DVal"));
                 Jet_vtxNtrk = std::max(float(0.),fjet.userFloat("vtxNTracks"));
                 Jet_vtx3deL = std::max(float(0.),fjet.userFloat("vtx3DSig"));
