@@ -20,6 +20,7 @@
 #include "flashgg/DataFormats/interface/SingleVertexView.h"
 #include "flashgg/DataFormats/interface/TTHHadronicTag.h"
 #include "flashgg/DataFormats/interface/TTHLeptonicTag.h"
+#include "flashgg/DataFormats/interface/TTHDiLeptonTag.h"
 #include "flashgg/DataFormats/interface/VBFDiPhoDiJetMVAResult.h"
 #include "flashgg/DataFormats/interface/VBFMVAResult.h"
 #include "flashgg/DataFormats/interface/VBFTag.h"
@@ -204,6 +205,10 @@ namespace  {
         flashgg::TTHLeptonicTag tthl;
         std::vector<flashgg::TTHLeptonicTag> vec_tthl;
         edm::Wrapper<std::vector<flashgg::TTHLeptonicTag> > wrp_vec_tthl;
+
+        flashgg::TTHDiLeptonTag tthd;
+        std::vector<flashgg::TTHDiLeptonTag> vec_tthd;
+        edm::Wrapper<std::vector<flashgg::TTHDiLeptonTag> > wrp_vec_tthd;
 
         flashgg::DoubleHTag hh;
         std::vector<flashgg::DoubleHTag> vec_hh;

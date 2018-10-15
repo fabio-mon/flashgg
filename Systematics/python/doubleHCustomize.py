@@ -87,6 +87,25 @@ def variablesToDump(customize):
 
 def tagList(customize,process):
     return [ ["DoubleHTag",12] ]#12 is the number of categories?
+                 ]
+
+
+    if customize.doBJetRegression : variables +=[
+            "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
+            "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
+            "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
+            "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
+            "sigmaMJets := getSigmaMOverMJets()"
+            ]
+
+    if customize.dumpWorkspace == False : return variables
+    else : return var_workspace
+
+    
+
+
+def tagList(customize,process):
+    return [ ["DoubleHTag",12] ]#12 is the number of categories
 
 
 def customizeTagSequence(customize,process):
@@ -102,6 +121,7 @@ def customizeTagSequence(customize,process):
         process.tagsDumper.reweight  =  cms.InputTag("flashggDoubleHReweight")
 
     ## remove single Higgs tags
+
     if customize.doubleHTagsOnly:
         process.flashggTagSequence.remove(process.flashggVBFTag)
         process.flashggTagSequence.remove(process.flashggTTHLeptonicTag)
