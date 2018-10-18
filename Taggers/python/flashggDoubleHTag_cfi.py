@@ -41,7 +41,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                                         multiclassSignalIdx=cms.int32(2), # this is multiclass index for Signal
                                                         ),
 
-                                   doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
+                                   doMVAFlattening=cms.bool(False),#do transformation of cumulative to make it flat
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
                                    MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181001_DeepCSV.root")#FIXME, this should be optional, is it? 
                                   ) 

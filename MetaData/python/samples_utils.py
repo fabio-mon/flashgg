@@ -990,8 +990,7 @@ Commands:
         self.mn = SamplesManager("$CMSSW_BASE/src/%s/MetaData/data/%s/datasets*.json" % (options.metaDataSrc,options.campaign),
                                  dbs_instance=options.dbs_instance,
                                  force=options.doForce,
-                                 queue=options.queue,maxThreads=options.max_threads,doContinue=options.doContinue,
-                                 copyProxy=options.copy_proxy)
+                                 queue=options.queue,maxThreads=options.max_threads,doContinue=options.doContinue)
         
         ## pprint( mn.cross_sections_ )
         if len(args) == 0:

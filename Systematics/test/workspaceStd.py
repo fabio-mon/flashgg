@@ -402,7 +402,7 @@ process.source = cms.Source ("PoolSource",
 #         "/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_0_0/3_0_0/GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/RunIIFall17-3_0_0-3_0_0-v0-RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/180325_204512/0000/myMicroAODOutputFile_1.root"
 #         "/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_0_1/3_0_1/GluGluHToGG_M-70_13TeV_powheg_pythia8/RunIIFall17-3_0_1-3_0_1-v0-RunIISummer17MiniAOD-NZSFlatPU28to62_92X_upgrade2017_realistic_v10-v1/180405_124501/0000/myMicroAODOutputFile_19.root"
 #         "/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_0_1/3_0_1/DoubleEG/RunIIFall17-3_0_1-3_0_1-v0-Run2017F-17Nov2017-v1/180331_074338/0000/myMicroAODOutputFile_1.root"
-        "file:myMicroAODOutputFile.root"
+ #       "file:myMicroAODOutputFile.root"
         #        "root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIISpring15-ReMiniAOD-1_1_0-25ns/1_1_0/VBFHToGG_M-125_13TeV_powheg_pythia8/RunIISpring15-ReMiniAOD-1_1_0-25ns-1_1_0-v0-RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/160105_224017/0000/myMicroAODOutputFile_1.root"
 #        "root://eoscms.cern.ch//eos/cms//store/group/phys_higgs/cmshgg/szenz/flashgg/RunIISpring15-ReReco74X-Rerun-1_1_0-25ns/1_2_0/DoubleEG/RunIISpring15-ReReco74X-Rerun-1_1_0-25ns-1_2_0-v0-Run2015D-04Dec2015-v2/160117_214114/0000/myMicroAODOutputFile_10.root"
 #        "root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIISpring15-ReMiniAOD-1_1_0-25ns/1_1_0/ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15-ReMiniAOD-1_1_0-25ns-1_1_0-v0-RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/160105_224456/0000/myMicroAODOutputFile_2.root"
@@ -418,7 +418,8 @@ process.source = cms.Source ("PoolSource",
 #"root://xrootd-cms.infn.it//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_v2/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg-1-v1-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180412_131554/0000/myMicroAODOutputFile_1.root"
 #"root://xrootd-cms.infn.it//store/group/phys_higgs/cmshgg/micheli/flashgg/LegacyReReco-20180629/1/DoubleEG/LegacyReReco-20180629-1-v0-Run2016E-07Aug17-v1/180629_143351/0000/myMicroAODOutputFile_44.root"
 #"root://xrootd-cms.infn.it//store/group/phys_higgs/cmshgg/micheli/flashgg/LegacyReReco-20180629/1/DoubleEG/LegacyReReco-20180629-1-v0-Run2016E-07Aug17-v1/180629_143351/0000/myMicroAODOutputFile_247.root"
-"root://cms-xrd-global.cern.ch//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra4/1/GluGluToHHTo2B2G_node_13_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg_extra4-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180528_183109/0000/myMicroAODOutputFile_1.root"
+#"root://cms-xrd-global.cern.ch//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra4/1/GluGluToHHTo2B2G_node_13_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg_extra4-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180528_183109/0000/myMicroAODOutputFile_1.root"
+"root://cms-xrd-global.cern.ch//store/group/phys_higgs/HiggsExo/HH_bbgg/RunIIFall17-3_1_0/3_1_0/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIFall17-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/180830_190720/0000/myMicroAODOutputFile_16.root"
 ))
 
 process.TFileService = cms.Service("TFileService",
