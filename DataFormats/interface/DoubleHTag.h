@@ -44,9 +44,11 @@ namespace flashgg {
         float getSigmaMOverMJets() const;
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
+        void setGenMhh(double x) { genMhh_ = x; }
+        double genMhh() const { return genMhh_; }
 
     private:
-        double mva_, MX_;
+        double mva_, MX_, genMhh_;
  //       std::vector<float> mva_prob_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
         LorentzVector dijet_;
