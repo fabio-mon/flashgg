@@ -8,6 +8,8 @@ def variablesToDump(customize):
              "subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
              "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
              "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
+             "leadingJet_puJetIdMVA := leadJet().puJetIdMVA()",
+             "subleadingJet_puJetIdMVA := subleadJet().puJetIdMVA()",
              "absCosThetaStar_CS := abs(getCosThetaStar_CS(6500))",#FIXME get energy from somewhere?
              "absCosTheta_bb := abs(CosThetaAngles()[1])",
              "absCosTheta_gg := abs(CosThetaAngles()[0])",
@@ -15,6 +17,8 @@ def variablesToDump(customize):
              "dijetCandidatePtOverdiHiggsM := dijetPtOverM()",
              "customLeadingPhotonIDMVA := diPhoton.leadingView.phoIdMvaWrtChosenVtx",
              "customSubLeadingPhotonIDMVA := diPhoton.subLeadingView.phoIdMvaWrtChosenVtx",
+             "EGMLeadingPhotonIDMVA := diPhoton.leadingPhoton.userFloat('EGMPhotonMVA')",
+             "EGMSubLeadingPhotonIDMVA := diPhoton.subLeadingPhoton.userFloat('EGMPhotonMVA')",
              "leadingPhotonSigOverE := diPhoton.leadingPhoton.sigEOverE",
              "subleadingPhotonSigOverE := diPhoton.subLeadingPhoton.sigEOverE",
              "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
@@ -23,6 +27,8 @@ def variablesToDump(customize):
              "HHbbggMVA := MVA()",
             # "HHbbggMVAprob0 := MVAprob()[0]",
              "MX := MX()",
+             "genMhh := genMhh()",
+             "nCleanJets := nCleanJets()",
              "Mjj := dijet().M()",
              "dijet_pt := dijet().pt",
              "dijet_eta := dijet().eta",
@@ -58,6 +64,14 @@ def variablesToDump(customize):
              "subleadingJet_hflav := subleadJet().hadronFlavour()",
              "subleadingJet_pflav := subleadJet().partonFlavour()",
 
+             "leadingPhoton_egChargedHadronIso := diPhoton.leadingPhoton.egChargedHadronIso",
+             "leadingPhoton_full5x5_r9 := diPhoton.leadingPhoton.full5x5_r9",
+             "leadingPhoton_hadronicOverEm := diPhoton.leadingPhoton.hadronicOverEm",
+             "leadingPhoton_superCluster_eta := diPhoton.leadingPhoton.superCluster.eta",
+             "subleadingPhoton_egChargedHadronIso := diPhoton.subLeadingPhoton.egChargedHadronIso",
+             "subleadingPhoton_full5x5_r9 := diPhoton.subLeadingPhoton.full5x5_r9",
+             "subleadingPhoton_hadronicOverEm := diPhoton.subLeadingPhoton.hadronicOverEm",
+             "subleadingPhoton_superCluster_eta := diPhoton.subLeadingPhoton.superCluster.eta",
 
              "ttHMVA_MET := 0",# these variables are needed for ttH killer MVA, which has to be implemented in the producer with another mvaComputer
              "ttHMVA_njets := 0",
@@ -157,7 +171,7 @@ def addGenAnalysis(customize,process,tagList):
     
     genVariables = ["mgg := mass",
                     "mbb := dijet.mass",
-                    
+                    "mhh := sqrt( pow(energy+dijet.energy,2) - pow(px+dijet.px,2) - pow(py+dijet.py,2) - pow(pz+dijet.pz,2))",                    
                     "leadPho_px := leadingPhoton.px",
                     "leadPho_py := leadingPhoton.py",
                     "leadPho_pz := leadingPhoton.pz",
