@@ -28,6 +28,8 @@ namespace flashgg {
       //  std::vector<float> MVAprob() const { return mva_prob_; }
         void setMX(double x) { MX_ = x; }
         double MX() const { return MX_; }
+        void setnCleanJets(int x) { nCleanJets_ = x; }
+        int nCleanJets() const { return nCleanJets_; }
         double diphotonPtOverM() const {return diPhoton()->pt()/mass(); }
         double dijetPtOverM() const {return dijet().pt()/mass(); }
 
@@ -48,7 +50,7 @@ namespace flashgg {
         double genMhh() const { return genMhh_; }
 
     private:
-        double mva_, MX_, genMhh_;
+        double mva_, MX_, genMhh_,nCleanJets_;
  //       std::vector<float> mva_prob_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
         LorentzVector dijet_;

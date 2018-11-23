@@ -28,6 +28,7 @@ def variablesToDump(customize):
             # "HHbbggMVAprob0 := MVAprob()[0]",
              "MX := MX()",
              "genMhh := genMhh()",
+             "nCleanJets := nCleanJets()",
              "Mjj := dijet().M()",
              "dijet_pt := dijet().pt",
              "dijet_eta := dijet().eta",
@@ -62,6 +63,15 @@ def variablesToDump(customize):
              "subleadingJet_mass := subleadJet().p4().M()",
              "subleadingJet_hflav := subleadJet().hadronFlavour()",
              "subleadingJet_pflav := subleadJet().partonFlavour()",
+
+             "leadingPhoton_egChargedHadronIso := diPhoton.leadingPhoton.egChargedHadronIso",
+             "leadingPhoton_full5x5_r9 := diPhoton.leadingPhoton.full5x5_r9",
+             "leadingPhoton_hadronicOverEm := diPhoton.leadingPhoton.hadronicOverEm",
+             "leadingPhoton_superCluster_eta := diPhoton.leadingPhoton.superCluster.eta",
+             "subleadingPhoton_egChargedHadronIso := diPhoton.subLeadingPhoton.egChargedHadronIso",
+             "subleadingPhoton_full5x5_r9 := diPhoton.subLeadingPhoton.full5x5_r9",
+             "subleadingPhoton_hadronicOverEm := diPhoton.subLeadingPhoton.hadronicOverEm",
+             "subleadingPhoton_superCluster_eta := diPhoton.subLeadingPhoton.superCluster.eta",
 
 
              "ttHMVA_MET := 0",# these variables are needed for ttH killer MVA, which has to be implemented in the producer with another mvaComputer

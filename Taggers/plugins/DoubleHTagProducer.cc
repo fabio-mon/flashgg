@@ -268,7 +268,7 @@ namespace flashgg {
             for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
                 auto jet = jets->ptrAt(ijet);
                 if (jet->pt()<minJetPt_ || fabs(jet->eta())>maxJetEta_)continue;
-                if (jet->bDiscriminator(bTagType_)<0) continue;//FIXME threshold might not be 0?
+             //   if (jet->bDiscriminator(bTagType_)<0) continue;//FIXME threshold might not be 0?
                 if( useJetID_ ){
                     if( JetIDLevel_ == "Loose" && !jet->passesJetID  ( flashgg::Loose ) ) continue;
                     if( JetIDLevel_ == "Tight" && !jet->passesJetID  ( flashgg::Tight ) ) continue;
@@ -312,6 +312,7 @@ namespace flashgg {
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
             tag_obj.setGenMhh( genMhh );
+            tag_obj.setnCleanJets( cleaned_jets.size() );
             
             if(doSigmaMDecorr_){
                 tag_obj.setSigmaMDecorrTransf(transfEBEB_,transfNotEBEB_);

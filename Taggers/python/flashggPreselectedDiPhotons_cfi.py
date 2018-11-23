@@ -56,6 +56,17 @@ rediscoveryHLTcutsV1 = cms.VPSet(
             cms.PSet(min=cms.string("0.8")),
             cms.PSet(min=cms.string("0.5"))
             ),
+   #          ),
+ #   cms.PSet(cut=cms.string("1."),  ##EE low R9
+ #            selection = cms.VPSet(
+ #           cms.PSet(max=cms.string("100000.0"), 
+ #                    rhocorr=phoEffArea,
+  #                   ),
+  #          cms.PSet(max=cms.string("100000.0")),
+  #          cms.PSet(max=cms.string("100000.0")),
+  #          cms.PSet(min=cms.string("-1")),
+  #          cms.PSet(min=cms.string("-1"))
+  #          ),
              )
     )
 
@@ -66,6 +77,11 @@ flashggPreselectedDiPhotons = cms.EDFilter(
     src = cms.InputTag("flashggUpdatedIdMVADiPhotons"),
     rho = cms.InputTag("fixedGridRhoAll"),
     cut = cms.string(
+ #       " (leadingPhoton.pt >30.0 && subLeadingPhoton.pt > 20.0)"
+ #       " && (abs(leadingPhoton.superCluster.eta) < 2.5 && abs(subLeadingPhoton.superCluster.eta) < 2.5)"
+ #       " && (abs(leadingPhoton.superCluster.eta) < 1.4442 || abs(leadingPhoton.superCluster.eta) > 1.566)"
+ #       " && (abs(subLeadingPhoton.superCluster.eta) < 1.4442 || abs(subLeadingPhoton.superCluster.eta) > 1.566)"
+ #       " && (abs(mass - 125. )<4.)"
         "    (leadingPhoton.full5x5_r9>0.8||leadingPhoton.egChargedHadronIso<20||leadingPhoton.egChargedHadronIso/leadingPhoton.pt<0.3)"
         " && (subLeadingPhoton.full5x5_r9>0.8||subLeadingPhoton.egChargedHadronIso<20||subLeadingPhoton.egChargedHadronIso/subLeadingPhoton.pt<0.3)"
         " && (leadingPhoton.hadronicOverEm < 0.08 && subLeadingPhoton.hadronicOverEm < 0.08)"
@@ -74,8 +90,8 @@ flashggPreselectedDiPhotons = cms.EDFilter(
         " && (abs(leadingPhoton.superCluster.eta) < 1.4442 || abs(leadingPhoton.superCluster.eta) > 1.566)"
         " && (abs(subLeadingPhoton.superCluster.eta) < 1.4442 || abs(subLeadingPhoton.superCluster.eta) > 1.566)"
         " && (leadPhotonId > -0.9 && subLeadPhotonId > -0.9)"
-#        " && (leadingPhoton.pt > mass/3. && subLeadingPhoton.pt > mass/4.)"
-#        " && (leadingPhoton.passElectronVeto) && (subLeadingPhoton.passElectronVeto)"
+##        " && (leadingPhoton.pt > mass/3. && subLeadingPhoton.pt > mass/4.)"
+##        " && (leadingPhoton.passElectronVeto) && (subLeadingPhoton.passElectronVeto)"
         ),
     variables = rediscoveryHLTvariables,
     categories = rediscoveryHLTcutsV1
