@@ -36,8 +36,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                   # BTagType = cms.untracked.string('pfCombinedInclusiveSecondaryVertexV2BJetTags'), #string for btag algorithm
                                    BTagType = cms.untracked.string('pfDeepCSVJetTags:probb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
-                                  # JetIDLevel = cms.string('Loose'),  #for 2016
-                                   JetIDLevel = cms.string('Tight2017'), #recommended for 2017
+                                   JetIDLevel = cms.string('Loose'),  #for 2016
+                                  # JetIDLevel = cms.string('Tight2017'), #recommended for 2017
 
                                    MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA
                                    MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
