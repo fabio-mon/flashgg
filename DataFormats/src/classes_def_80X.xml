@@ -61,8 +61,7 @@
 </class>
 <class name="std::vector<flashgg::VBFTag>"/>
 <class name="edm::Wrapper<std::vector<flashgg::VBFTag> >"/>
-<class name="flashgg::DoubleHTag" ClassVersion="13">
- <version ClassVersion="13" checksum="1084245294"/>
+<class name="flashgg::DoubleHTag" ClassVersion="12">
  <version ClassVersion="12" checksum="1782830055"/>
   <version ClassVersion="10" checksum="2099650607"/>
   <version ClassVersion="11" checksum="2809364010"/>
