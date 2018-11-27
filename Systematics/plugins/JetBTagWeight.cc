@@ -10,8 +10,12 @@
 // setup calibration readers
 std::string CMSSW_BASE(getenv("CMSSW_BASE"));
 std::string CSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/CSVv2.csv");
-BTagCalibration calib("CSVv2", CSVfilename);
+BTagCalibration calib_CSV("CSVv2", CSVfilename);
 
+std::string DeepCSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/DeepCSV_Moriond17_B_H.csv");
+BTagCalibration calib_DeepCSV("DeepCSV",  DeepCSVfilename); 
+
+BTagCalibration calib;
 //For medium working point
 
 BTagCalibrationReader readerMedB(BTagEntry::OP_MEDIUM, "central", {"up", "down"}); //readerMedB.load(calib, BTagEntry::FLAV_B, "comb"); 
@@ -59,6 +63,12 @@ namespace flashgg {
         this->setMakesWeight( true );
 
 
+        if(bTag_=="pfDeepCSV"){
+            calib=calib_DeepCSV; 
+            if(debug_) cout<< "Using DeepCSV"<< endl;
+        }else{
+            calib=calib_CSV; 
+        }
 
         // readerMedB.load(calib,                // calibration instance
         //                 BTagEntry::FLAV_B,    // btag flavour
@@ -148,13 +158,17 @@ namespace flashgg {
             int JetFlav = obj.hadronFlavour();
             bool JetBTagStatus = false;
             float JetBDiscriminator = obj.bDiscriminator(bTag_.c_str());
+
+            if(bTag_=="pfDeepCSV") JetBDiscriminator = obj.bDiscriminator("pfDeepCSVJetTags:probb")+ obj.bDiscriminator("pfDeepCSVJetTags:probbb"); 
+            else JetBDiscriminator= obj.bDiscriminator(bTag_.c_str());
+
             if(JetBDiscriminator > bDiscriminator_ ) JetBTagStatus = true;
 
 
             if( this->debug_ ) {
                 std::cout << " In JetBTagWeight before calib reader: " << shiftLabel( syst_shift ) << ": Object has pt= " << obj.pt() << " eta=" << obj.eta() << " flavour=" << obj.hadronFlavour()
                           << " efficiency of " << eff_central << " values for scale factors : "<< JetPt <<" "<< JetEta <<" "<<JetFlav 
-                          << " BTag Values : "<< obj.bDiscriminator(bTag_.c_str()) <<" "<< bDiscriminator_<<" "<<JetBTagStatus<<std::endl;
+                          << " BTag Values : "<< JetBDiscriminator <<" "<< bDiscriminator_<<" "<<JetBTagStatus<<std::endl;
             }
 
             //get scale factors from calib reader

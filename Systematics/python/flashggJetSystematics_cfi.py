@@ -148,7 +148,7 @@ def createJetSystematicsForTag(process,jetInputTag):
 						 	   bTag = cms.string(flashggBTag),
 						 	   bDiscriminator = bDiscriminator80XReReco,#bDiscriminator76X
                                                            Debug = cms.untracked.bool(False),
-                                                           ApplyCentralValue = cms.bool(True)
+                                                           ApplyCentralValue = cms.bool(False)
                                                            ),
 						 cms.PSet( MethodName = cms.string("FlashggJetBTagReshapeWeight"),
                                                            Label = cms.string("JetBTagReshapeWeight"),
@@ -159,7 +159,7 @@ def createJetSystematicsForTag(process,jetInputTag):
                                                            bDiscriminator = bDiscriminator80XReReco,#bDiscriminator76X,
                                                            bTagReshapeSystOption = cms.int32(1),#For changing the source of uncertainty
                                                            Debug = cms.untracked.bool(False),
-                                                           ApplyCentralValue = cms.bool(True)
+                                                           ApplyCentralValue = cms.bool(False)
                                                            ),
 #                                                 cms.PSet( MethodName = cms.string("FlashggJetRMSShift"),
 #                                                           Label = cms.string("RMSShift"),
