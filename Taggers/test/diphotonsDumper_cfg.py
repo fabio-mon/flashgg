@@ -10,7 +10,13 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.source = cms.Source("PoolSource",
                             fileNames=cms.untracked.vstring(
         #"file:myMicroAODOutputFile.root"        
-        "root://xrootd-cms.infn.it//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_v2/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg-1-v1-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180412_131554/0000/myMicroAODOutputFile_1.root"        
+      #  "root://xrootd-cms.infn.it//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_v2/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg-1-v1-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180412_131554/0000/myMicroAODOutputFile_1.root"        
+"root://xrootd-cms.infn.it///store/user/micheli/HHbbgg/MicroAod/HHbbgg_Signal_SM_20181120/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/HHbbgg_Signal_SM_20181120-1-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/181120_113738/0000/myMicroAODOutputFile_2.root"
+#"root://xrootd-cms.infn.it///store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_v2/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg-1-v1-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180412_131554/0000/myMicroAODOutputFile_4.root"
+#"root://eoscms.cern.ch//eos/cms//store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_1_0/3_1_0/GluGluHToGG_M-125_13TeV_powheg_pythia8/RunIIFall17-3_1_0-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/180609_081728/0000/myMicroAODOutputFile_5.root"
+#"root://xrootd-cms.infn.it///store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/GluGluHToGG_M-125_13TeV_powheg_pythia8/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_092344/0000/myMicroAODOutputFile_1.root"    
+#"root://eoscms.cern.ch//eos/cms///store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_1_0/3_1_0/ttHToGG_M125_13TeV_powheg_pythia8/RunIIFall17-3_1_0-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/180610_082856/0000/myMicroAODOutputFile_2.root"
+#"root://xrootd-cms.infn.it///store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/ttHToGG_M125_13TeV_powheg_pythia8_v2/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_093447/0000/myMicroAODOutputFile_1.root"
         )
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -26,9 +32,11 @@ elif os.environ["CMSSW_VERSION"].count("CMSSW_7_4"):
 elif os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2'
 elif os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
-     process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mc2017_realistic_v12')
+    # process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mc2017_realistic_v12')
+     process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mc2017_realistic_v14')
 else:
     raise Exception,"Could not find a sensible CMSSW_VERSION for default globaltag"
+#process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2'
 print "[INFO] Global Tag: ",process.GlobalTag.globaltag
 
 process.TFileService = cms.Service("TFileService",

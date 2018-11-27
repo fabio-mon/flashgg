@@ -127,6 +127,7 @@ def customizeTagSequence(customize,process):
 
     if customize.doubleHTagsOnly:
         process.flashggTagSequence.remove(process.flashggVBFTag)
+        process.flashggTagSequence.remove(process.flashggTTHDiLeptonTag)
         process.flashggTagSequence.remove(process.flashggTTHLeptonicTag)
         process.flashggTagSequence.remove(process.flashggTTHHadronicTag)
         process.flashggTagSequence.remove(process.flashggVHEtTag)

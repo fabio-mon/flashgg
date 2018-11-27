@@ -320,8 +320,8 @@ namespace flashgg {
             tag_obj.includeWeights( *dipho );
          //   if (counter_jet1>0)   tag_obj.includeWeights( *leadJet );
          //   if (counter_jet2>0)  tag_obj.includeWeights( *subleadJet );
-          //  if (counter_jet1>0)   tag_obj.includeWeightsByLabel( *leadJet,"JetBTagReshapeWeight" );
-          //  if (counter_jet2>0)  tag_obj.includeWeightsByLabel( *subleadJet,"JetBTagReshapeWeight" );
+            if (counter_jet1>0)   tag_obj.includeWeightsByLabel( *leadJet,"JetBTagReshapeWeight" );
+            if (counter_jet2>0)  tag_obj.includeWeightsByLabel( *subleadJet,"JetBTagReshapeWeight" );
          //   if (counter_jet1>0)   tag_obj.includeWeightsByLabel( *leadJet,"JetBTagWeight" );
           //  if (counter_jet2>0)  tag_obj.includeWeightsByLabel( *subleadJet,"JetBTagWeight" );
             
