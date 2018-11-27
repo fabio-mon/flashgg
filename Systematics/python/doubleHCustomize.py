@@ -4,7 +4,15 @@ def variablesToDump(customize):
     var_workspace = [
              "Mjj := dijet().M()"
     ]
-    variables = [ "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
+    variables= [ 
+             "leadingPhoton_pt := diPhoton.leadingPhoton.pt",
+             "leadingPhoton_eta := diPhoton.leadingPhoton.eta",
+             "leadingPhoton_phi := diPhoton.leadingPhoton.phi",
+             "subleadingPhoton_pt := diPhoton.subLeadingPhoton.pt",
+             "subleadingPhoton_eta := diPhoton.subLeadingPhoton.eta",
+             "subleadingPhoton_phi := diPhoton.subLeadingPhoton.phi",
+             "nCleanJets := nCleanJets()"]
+    variables_old = [ "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
              "subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
              "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
              "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",

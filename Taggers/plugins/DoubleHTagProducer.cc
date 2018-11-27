@@ -198,7 +198,7 @@ namespace flashgg {
         
         // MC truth
         TagTruthBase truth_obj;
-        double genMhh=0.;
+   //     double genMhh=0.;
         if( ! evt.isRealData() ) {
             Handle<View<reco::GenParticle> > genParticles;
             std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
@@ -222,7 +222,7 @@ namespace flashgg {
                 TLorentzVector H1,H2;
                 H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
                 H2.SetPtEtaPhiE(selHiggses[1]->p4().pt(),selHiggses[1]->p4().eta(),selHiggses[1]->p4().phi(),selHiggses[1]->p4().energy());
-                genMhh  = (H1+H2).M();
+        //        genMhh  = (H1+H2).M();
             }
             truth_obj.setGenPV( higgsVtx );
             truths->push_back( truth_obj );
@@ -278,27 +278,35 @@ namespace flashgg {
                     cleaned_jets.push_back( jet );
                 }
             }
-            if( cleaned_jets.size() < 2 ) { continue; }
+        //    if( cleaned_jets.size() < 2 ) { continue; }
             //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
             double sumbtag_ref = -999;
-            bool hasDijet = false;
+    //        bool hasDijet = false;
             edm::Ptr<flashgg::Jet>  jet1, jet2;
+            int counter_jet1 = 0;
+            int counter_jet2 = 0;
+            if (cleaned_jets.size()>0){
             for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
                 auto jet_1 = cleaned_jets[ijet];
                 for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
                     auto jet_2 = cleaned_jets[kjet];
                     auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
                     if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
-                    double sumbtag = jet_1->bDiscriminator(bTagType_) + jet_2->bDiscriminator(bTagType_);
+                  //  double sumbtag = jet_1->bDiscriminator(bTagType_) + jet_2->bDiscriminator(bTagType_);
+                    double sumbtag = jet_1->bDiscriminator("pfDeepCSVJetTags:probb")+jet_1->bDiscriminator("pfDeepCSVJetTags:probbb")
+                  + jet_2->bDiscriminator("pfDeepCSVJetTags:probb")+jet_2->bDiscriminator("pfDeepCSVJetTags:probbb");
                     if (sumbtag > sumbtag_ref) {
-                        hasDijet = true;
+               //         hasDijet = true;
                         sumbtag_ref = sumbtag;
                         jet1 = jet_1;
                         jet2 = jet_2;
+                        counter_jet1++;
+                        counter_jet2++;
                     }
                 }
             }
-            if (!hasDijet) continue;             
+            }
+         //   if (!hasDijet) continue;             
  
             auto & leadJet = jet1; 
             auto & subleadJet = jet2; 
@@ -307,12 +315,21 @@ namespace flashgg {
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.setDiPhotonIndex( candIndex );
             tag_obj.setSystLabel( systLabel_ );
+            tag_obj.setnCleanJets( cleaned_jets.size() );
+            tag_obj.setCategoryNumber(0);
+            tag_obj.includeWeights( *dipho );
+         //   if (counter_jet1>0)   tag_obj.includeWeights( *leadJet );
+         //   if (counter_jet2>0)  tag_obj.includeWeights( *subleadJet );
+          //  if (counter_jet1>0)   tag_obj.includeWeightsByLabel( *leadJet,"JetBTagReshapeWeight" );
+          //  if (counter_jet2>0)  tag_obj.includeWeightsByLabel( *subleadJet,"JetBTagReshapeWeight" );
+         //   if (counter_jet1>0)   tag_obj.includeWeightsByLabel( *leadJet,"JetBTagWeight" );
+          //  if (counter_jet2>0)  tag_obj.includeWeightsByLabel( *subleadJet,"JetBTagWeight" );
             
-            if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
+     /*       if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
 
             // compute extra variables here
             tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
-            tag_obj.setGenMhh( genMhh );
+        //    tag_obj.setGenMhh( genMhh );
             tag_obj.setnCleanJets( cleaned_jets.size() );
             
             if(doSigmaMDecorr_){
@@ -346,6 +363,9 @@ namespace flashgg {
                     tags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );                 
                 }
             }
+            */
+            tags->push_back( tag_obj );
+            tags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );                 
         }
         evt.put( std::move( truths ) );
         evt.put( std::move( tags ) );

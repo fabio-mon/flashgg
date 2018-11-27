@@ -13,7 +13,8 @@ std::string CMSSW_BASE(getenv("CMSSW_BASE"));
 std::string CSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/CSVv2.csv");
 BTagCalibration calib_CSV("CSVv2", CSVfilename);
 
-std::string DeepCSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/DeepCSV_94XSF_V3_B_F.csv");
+//std::string DeepCSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/DeepCSV_94XSF_V3_B_F.csv");
+std::string DeepCSVfilename = CMSSW_BASE + std::string("/src/flashgg/Systematics/data/DeepCSV_Moriond17_B_H.csv");
 BTagCalibration calib_DeepCSV("DeepCSV",  DeepCSVfilename); 
 
 
