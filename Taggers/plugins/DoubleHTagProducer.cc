@@ -333,8 +333,8 @@ namespace flashgg {
             int catnum = chooseCategory( tag_obj.MVA(), tag_obj.MX() );
             tag_obj.setCategoryNumber( catnum );
             tag_obj.includeWeights( *dipho );
-            tag_obj.includeWeights( *leadJet );
-            tag_obj.includeWeights( *subleadJet );
+         //   tag_obj.includeWeights( *leadJet );
+         //   tag_obj.includeWeights( *subleadJet );
 
             if (catnum>-1){
                 if (doCategorization_) {
