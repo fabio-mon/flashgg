@@ -730,18 +730,19 @@ if customize.doBJetRegression:
     if jetsystlabels!=[]:
        # for jetsyst in [systlabel[0]]+jetsystlabels:
         for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
-            if jetsyst != "" : 
-                  jetTagsSystematics = cms.VInputTag()
-                  for icoll,coll in enumerate(recoJetCollections):
-                        jetTagsSystematics.append(cms.InputTag(coll.moduleLabel,jetsyst))
+              jetTagsSystematics = cms.VInputTag()
+              for icoll,coll in enumerate(recoJetCollections):
+                  #jetTagsSystematics.append(cms.InputTag(coll.moduleLabel,jetsyst))
+                  jetTagsSystematics.append(cms.InputTag("bRegProducer%d%s" %(icoll,jetsyst)))
                   DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = jetTagsSystematics)
-            else : DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = recoJetCollections)
             
-            setattr(process,"DoubleHTagProducer%d%s" %(icoll,jetsyst),DoubleHTagProducer)
-            doubleHTagProducers.append(DoubleHTagProducer)
+              setattr(process,"flashggDoubleHTag%s"%(jetsyst),DoubleHTagProducer)
+              doubleHTagProducers.append(DoubleHTagProducer)
    
+        print "Old tag sequence  : ", process.flashggTagSequence 
         process.doubleHTagProducers = cms.Sequence(reduce(lambda x,y: x+y, doubleHTagProducers))
         process.flashggTagSequence.replace(process.flashggDoubleHTag,process.doubleHTagProducers) 
+        print "New tag sequence  : ", process.flashggTagSequence 
 
 
 
