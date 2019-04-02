@@ -133,13 +133,13 @@ customize.options.register('doPdfWeights',
                            'doPdfWeights'
                            )
 customize.options.register('dumpTrees',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpTrees'
                            )
 customize.options.register('dumpWorkspace',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpWorkspace'
@@ -699,30 +699,49 @@ else :
                          process.finalFilter*
                          process.tagsDumper)
 
+
 if customize.doBJetRegression:
 
     bregProducers = []
-    bregJets = []
+    doubleHTagProducers = []
     
     from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
     from flashgg.Taggers.flashggbRegressionProducer_cfi import flashggbRegressionProducer
     recoJetCollections = UnpackedJetCollectionVInputTag
 
+    from flashgg.Taggers.flashggDoubleHTag_cfi import flashggDoubleHTag
+
 
     for icoll,coll in enumerate(recoJetCollections):
         print "doing icoll "+str(icoll)
 
-        producer = flashggbRegressionProducer.clone(JetTag = coll)
+       # for jetsyst in [systlabel[0]]+jetsystlabels:
+        for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
+            if jetsyst != "" : producer = flashggbRegressionProducer.clone(JetTag = cms.InputTag(coll.moduleLabel,jetsyst))
+            else : producer = flashggbRegressionProducer.clone(JetTag = coll)
 
-        setattr(process,"bRegProducer%d" %icoll,producer)
-        bregProducers.append(producer)
-        bregJets.append("bRegProducer%d" %icoll)
+            setattr(process,"bRegProducer%d%s" %(icoll,jetsyst),producer)
+            bregProducers.append(producer)
             
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
-#    process.bbggtree.inputTagJets=cms.VInputTag(bregJets)
-    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
-#    process.p.replace(process.jetSystematicsSequence,process.flashggUnpackedJets*process.jetSystematicsSequence+process.bregProducers)  #tried but no difference
-
+#    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
+    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.bregProducers)  #
+        
+    if jetsystlabels!=[]:
+       # for jetsyst in [systlabel[0]]+jetsystlabels:
+        for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
+            if jetsyst != "" : 
+                  jetTagsSystematics = cms.VInputTag()
+                  for icoll,coll in enumerate(recoJetCollections):
+                        jetTagsSystematics.append(cms.InputTag(coll.moduleLabel,jetsyst))
+                  DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = jetTagsSystematics)
+            else : DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = recoJetCollections)
+            
+            setattr(process,"DoubleHTagProducer%d%s" %(icoll,jetsyst),DoubleHTagProducer)
+            doubleHTagProducers.append(DoubleHTagProducer)
+   
+        process.doubleHTagProducers = cms.Sequence(reduce(lambda x,y: x+y, doubleHTagProducers))
+        process.flashggTagSequence.replace(process.flashggDoubleHTag,process.doubleHTagProducers) 
 
 
 
