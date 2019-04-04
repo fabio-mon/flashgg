@@ -14,8 +14,8 @@ dropVBFInNonGold = False  # for 2015 only!
 process = cms.Process("FLASHggSyst")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load("Configuration.StandardSequences.GeometryDB_cff")
-process.load("Configuration.StandardSequences.MagneticField_cff")
+#process.load("Configuration.StandardSequences.GeometryDB_cff")
+#process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 if os.environ["CMSSW_VERSION"].count("CMSSW_7_6"):
@@ -133,13 +133,13 @@ customize.options.register('doPdfWeights',
                            'doPdfWeights'
                            )
 customize.options.register('dumpTrees',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpTrees'
                            )
 customize.options.register('dumpWorkspace',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpWorkspace'
@@ -580,7 +580,8 @@ for tag in tagList:
           else:
               currentVariables = []
       isBinnedOnly = (systlabel !=  "")
-      if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+     # if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+      if ( customize.doPdfWeights) and (customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
           print "Signal MC central value, so dumping PDF weights"
           dumpPdfWeights = True
           nPdfWeights = 60
@@ -699,6 +700,30 @@ else :
                          process.finalFilter*
                          process.tagsDumper)
 
+#if customize.doBJetRegression:
+#
+#    bregProducers = []
+#    bregJets = []
+#    
+#    from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
+#    from flashgg.Taggers.flashggbRegressionProducer_cfi import flashggbRegressionProducer
+#    recoJetCollections = UnpackedJetCollectionVInputTag
+#
+#
+#    for icoll,coll in enumerate(recoJetCollections):
+#        print "doing icoll "+str(icoll)
+#
+#        producer = flashggbRegressionProducer.clone(JetTag = coll)
+#
+#        setattr(process,"bRegProducer%d" %icoll,producer)
+#        bregProducers.append(producer)
+#        bregJets.append("bRegProducer%d" %icoll)
+#            
+#    process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
+##    process.bbggtree.inputTagJets=cms.VInputTag(bregJets)
+#    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
+##    process.p.replace(process.jetSystematicsSequence,process.flashggUnpackedJets*process.jetSystematicsSequence+process.bregProducers)  #tried but no difference
+
 
 if customize.doBJetRegression:
 
@@ -717,15 +742,17 @@ if customize.doBJetRegression:
 
        # for jetsyst in [systlabel[0]]+jetsystlabels:
         for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
+       # for jetsyst in ['']:
+            # for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
             if jetsyst != "" : producer = flashggbRegressionProducer.clone(JetTag = cms.InputTag(coll.moduleLabel,jetsyst))
             else : producer = flashggbRegressionProducer.clone(JetTag = coll)
 
             setattr(process,"bRegProducer%d%s" %(icoll,jetsyst),producer)
             bregProducers.append(producer)
-            
+           
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
-#    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
-    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.bregProducers)  #
+    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
+#    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence+process.bregProducers)  #
         
     if jetsystlabels!=[]:
        # for jetsyst in [systlabel[0]]+jetsystlabels:
@@ -734,15 +761,18 @@ if customize.doBJetRegression:
               for icoll,coll in enumerate(recoJetCollections):
                   #jetTagsSystematics.append(cms.InputTag(coll.moduleLabel,jetsyst))
                   jetTagsSystematics.append(cms.InputTag("bRegProducer%d%s" %(icoll,jetsyst)))
-                  DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = jetTagsSystematics)
+                  ###DoubleHTagProducer = flashggDoubleHTag.clone(JetTags = jetTagsSystematics)
+                  getattr(process, "flashggDoubleHTag"+jetsyst).JetTags = jetTagsSystematics
             
-              setattr(process,"flashggDoubleHTag%s"%(jetsyst),DoubleHTagProducer)
-              doubleHTagProducers.append(DoubleHTagProducer)
+             # setattr(process,"flashggDoubleHTag%s"%(jetsyst),DoubleHTagProducer)
+             # doubleHTagProducers.append(DoubleHTagProducer)
    
-        print "Old tag sequence  : ", process.flashggTagSequence 
-        process.doubleHTagProducers = cms.Sequence(reduce(lambda x,y: x+y, doubleHTagProducers))
-        process.flashggTagSequence.replace(process.flashggDoubleHTag,process.doubleHTagProducers) 
+    #    print "Old tag sequence  : ", process.flashggTagSequence 
+    #    process.doubleHTagProducers = cms.Sequence(reduce(lambda x,y: x+y, doubleHTagProducers))
+    #    process.flashggTagSequence.replace(process.flashggDoubleHTag,process.doubleHTagProducers) 
         print "New tag sequence  : ", process.flashggTagSequence 
+        print "New syst merger src  : ", process.flashggSystTagMerger.src 
+        print "New systematics tag sequence  : ", process.systematicsTagSequences
 
 
 
