@@ -13,23 +13,23 @@ year = settings.year
 #default values first
 year_norm = 0
 jetPUID = 'Loose'
-#weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
-weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
+weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+#weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
 MVAscalingValue=cms.double(1.)#scale MVA output before the cumulative transformation for 2017(2016 kept unchanged for simplicity, we will probably change that once we have all 3 years.)
 
 if year == "2016":
     year_norm = 0
     jetPUID = 'Loose'
-  #  weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+ #   weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
     MVAscalingValue=1.
 elif year == "2017":
     year_norm = 1
     jetPUID = 'Tight2017'
-   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
-  #  MVAscalingValue=1.011026
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
-    MVAscalingValue=1.02309
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
+    MVAscalingValue=1.011026
+   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
+   # MVAscalingValue=1.02309
 
 
 import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
@@ -37,7 +37,7 @@ from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'), # diphoton collection (will be replaced by systematics machinery at run time)
-                                   JetTags= UnpackedJetCollectionVInputTag, # one jet per vertex
+                                   JetTags= UnpackedJetCollectionVInputTag, # one jet collection per vertex
                                    GenParticleTag = cms.InputTag( "flashggPrunedGenParticles" ), # to compute MC-truth info
                                    SystLabel      = cms.string(""), # used by systematics machinery
                                    
@@ -80,8 +80,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
                                    doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
-                                  # MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
-                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
+                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
+                                 #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    doReweight = flashggDoubleHReweight.doReweight,
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
@@ -154,7 +154,7 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       [#"leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
                        #"subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
-                       "Mjj := dijet().M()",
+                   #    "Mjj := dijet().M()",
                        "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
                        "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
                       # "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",#FIXME get energy from somewhere?

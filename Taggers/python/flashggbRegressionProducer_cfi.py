@@ -2,6 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
 from flashgg.Taggers.flashggTags_cff import flashggUnpackedJets
+from flashgg.MicroAOD.flashggJets_cfi import  maxJetCollections
 
 import os
 import flashgg.Systematics.settings as settings
@@ -24,7 +25,9 @@ elif year == "2017":
 
  
 flashggbRegressionProducer= cms.EDProducer('flashggbRegressionProducer',
-                                           JetTag=cms.InputTag("flashggUnpackedJets","0"),
+                                   #        JetTags=cms.InputTag("flashggUnpackedJets","0"),
+                                           JetTags= UnpackedJetCollectionVInputTag, # one jet collection per vertex
+                                           NCollections = cms.uint32(maxJetCollections),
                                            rhoFixedGridCollection = cms.InputTag('fixedGridRhoFastjetAll'),
                                            bRegressionWeightfile= bRegressionWeightfile_str, 
                                            y_mean = y_mean_str ,
