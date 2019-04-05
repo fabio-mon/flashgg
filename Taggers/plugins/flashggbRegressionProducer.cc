@@ -318,12 +318,11 @@ namespace flashgg {
             bRegNN = EvaluateNN();
             NNvectorVar_.clear();
 
+            float corr=1., res=0.2;
             if (fjet.pt()<20) {//b-jet regression should not be applied to low-pt jets since not trained. just set a correction of 1
-                float corr=1., res=0.2;
                 fjet.addUserFloat("bRegNNCorr", corr);
                 fjet.addUserFloat("bRegNNResolution",res);
             }else{
-                float corr = 1., res=0.2;
                 if ( (TMath::Finite(bRegNN[0])) && (TMath::Finite(bRegNN[1])) && (TMath::Finite(bRegNN[2])) )  {
                       corr = bRegNN[0]*y_std_+y_mean_;
                       res = 0.5*(bRegNN[2]-bRegNN[1])*y_std_;

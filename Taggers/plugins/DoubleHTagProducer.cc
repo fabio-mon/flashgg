@@ -348,11 +348,11 @@ namespace flashgg {
             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diPhotons->ptrAt( candIndex );
 
             // kinematic cuts on diphotons
-            auto & leadPho = *(dipho->leadingPhoton());
-            auto & subleadPho = *(dipho->subLeadingPhoton());
+            auto leadPho = dipho->leadingPhoton();
+            auto subleadPho = dipho->subLeadingPhoton();
 
-            double leadPt = leadPho.pt();
-            double subleadPt = subleadPho.pt();
+            double leadPt = leadPho->pt();
+            double subleadPt = subleadPho->pt();
             if( scalingPtCuts_ ) {
                 leadPt /= dipho->mass();
                 subleadPt /= dipho->mass();
@@ -360,12 +360,12 @@ namespace flashgg {
             if( leadPt <= minLeadPhoPt_ || subleadPt <= minSubleadPhoPt_ ) { continue; }
             //apply egm photon id with given working point
             if(doPhotonId_){
-                if(leadPho.userFloat("EGMPhotonMVA")<photonIDCut_ || subleadPho.userFloat("EGMPhotonMVA")<photonIDCut_){
+                if(leadPho->userFloat("EGMPhotonMVA")<photonIDCut_ || subleadPho->userFloat("EGMPhotonMVA")<photonIDCut_){
                     continue;
                 }
             }
             //electron veto
-            if(leadPho.passElectronVeto()<photonElectronVeto_[0] || subleadPho.passElectronVeto()<photonElectronVeto_[1]){
+            if(leadPho->passElectronVeto()<photonElectronVeto_[0] || subleadPho->passElectronVeto()<photonElectronVeto_[1]){
                 continue;
             }
 
