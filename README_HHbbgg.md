@@ -4,7 +4,8 @@ Instuctions how to run HHbbgg code intergrated to the flashgg framework.
 
 Main readme for flashgg can be found here : flashgg/README.md.
 
-#### The most recent branch : hh_tag_ttH_22_02_2019 
+#### The most recent branch : hh_tag_ttH_22_02_2019 and commit fea73cbf662075000f01da2d09c009bc40c19a65
+__Please__ make sure to checkout the specific commit to avoid some unwanted changes!
 
 First presentation of the new code from Summer 2018 can be found here :
 https://indico.cern.ch/event/718608/contributions/3040484/attachments/1668225/2675178/micheli_HHbbgg_20180613.pdf
