@@ -4,7 +4,7 @@ Instuctions how to run HHbbgg code intergrated to the flashgg framework.
 
 Main readme for flashgg can be found here : flashgg/README.md.
 
-#### The most recent branch : hh_tag_94X_20181217
+#### The most recent branch : hh_tag_ttH_22_02_2019 
 
 First presentation of the new code from Summer 2018 can be found here :
 https://indico.cern.ch/event/718608/contributions/3040484/attachments/1668225/2675178/micheli_HHbbgg_20180613.pdf
@@ -29,7 +29,7 @@ git clone https://github.com/chernyavskaya/flashgg flashgg
 cd flashgg     
 git remote add chernyavskaya https://github.com/chernyavskaya/flashgg.git
 git fetch chernyavskaya
-git checkout -b branch_name --track chernyavskaya/hh_tag_94X_20181217
+git checkout -b branch_name --track chernyavskaya/name_of_the_branch
  
 ```
 In the sourse file flashgg/setup_9_4_X.sh , comment out the following linesm you do not need them, because you check out the code directly from me instead of general flahgg:
@@ -79,27 +79,27 @@ lumiMask=path/name.txt
 #### For MC one has to specify the correct PU target to be used :
 It can be found in these jsons :
 
-**2016** : https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/jsons/HHbbgg_MC_2016_80X_DiphotonBjets.json#L10
+**2016** : jsons/HHbbgg_MC_2016_80X_DiphotonBjets.json
 
-**2017** : https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/jsons/2017/HHbbgg_2017_94X_bkg.json#L16
+**2017** : jsons/2017/HHbbgg_2017_94X_bkg.json
 
 #### In flashgg, first the MicroAOD ntuples are produced from MINIAOD. We run the HHbbgg code on top of these MicroAOD.
 In the json.json we specify the Campaign - which MicroAOD prodcution to use, as well as the names of the samples we want to run on. 
 All jsons for 2016 and 2017 MC and data can be found here :
-https://github.com/chernyavskaya/flashgg/tree/hh_tag_94X_20181217/jsons
+jsons
 
 While all Campaigns with the file paths to each MC or data samples can be found here :
-https://github.com/chernyavskaya/flashgg/tree/hh_tag_94X_20181217/MetaData/data
+MetaData/data
 
 ### The code set up: 
 The code is set up in a very flexible way, with almost nothing being hardcoded, but rather access from easily changeble config files.
 #### Main config files :
 * Main config for DoubleHTagger with all cuts, MVA weights files, categrozation, etc :
-https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/Taggers/python/flashggDoubleHTag_cfi.py
+Taggers/python/flashggDoubleHTag_cfi.py
 * b-jet energy regression config :
-https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/Taggers/python/flashggbRegressionProducer_cfi.py
+Taggers/python/flashggbRegressionProducer_cfi.py
 * variables added to the trees/workspaces :
-https://github.com/chernyavskaya/flashgg/blob/hh_tag_94X_20181217/Systematics/python/doubleHCustomize.py
+Systematics/python/doubleHCustomize.py
 
  
 #### Categorization :
@@ -117,12 +117,12 @@ By default it is set to -1, which means no reweighting is applied.
 
 You have to prepare a json with only and exacly 12 BSM nodes for 2016 and 6 node for 2017. You should use the following jsons:
 ```
-jsons/2017/HHbbgg_2017_94X_nodesonlySameName.json
-jsons/HHbbgg_MC_2016_80X_nodesOnlySameName.json
+jsons/2017/HHbbgg_2017_94X_nodes_samename.json
+jsons/HHbbgg_MC_2016_80X_nodes_samename.json
 ```
-12 reweighting weights are saved in the trees : benchmark_reweight_NUM. The weight benchmark_reweight_NUM should be applied to obtain a benchmark number NUM. _Make sure that you preserve normalization of the nodes! It is not guranteed with this reweighting!_  To do that you just have to divide the weights for the nodes by the value from the following .json :
+14 reweighting weights are saved in the trees : 12 for benchmark_reweight_NUM, also SM and box are present in the weights as well. The weight benchmark_reweight_NUM should be applied to obtain a benchmark number NUM. _Make sure that you preserve normalization of the nodes! It is not guranteed with this reweighting!_  To do that you just have to divide the weights for the nodes by the value from the following .json :
 ```
-jsons/reweighting_normalization_15_02_2018.json
+jsons/reweighting_normalization_18_03_2018.json
 ````
 
 #### Events at generator level :
@@ -141,7 +141,12 @@ Mets->MetsCorr in these 2 files:
 Systematics/python/flashggMetSystematics_cfi.py
 Taggers/python/flashggDoubleHTag_cfi.py   ## this file has to be changed for SM 2017 as well
 ```
-If you do not do it, the code will simply crash.
+If you do not do it, the code will simply crash. To help navigate which MC samples are affected, I have created two separate campaigns for 2017 : with Mets and MetsCorr
+
+#### MicroAOD campaigns
+2016 : RunIIMoriond17_HHbbgg_breg_20180601
+2017 : HHbbgg_MC2017_14032019_Mets and HHbbgg_MC2017_14032019_MetsCorr
+
 
  
  
