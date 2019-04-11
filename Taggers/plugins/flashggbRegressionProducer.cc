@@ -50,15 +50,15 @@ namespace flashgg {
     private:
         void produce( Event &, const EventSetup & ) override;
         std::vector<edm::InputTag> inputTagJets_;
-        unsigned int nCollections_;
-       // edm::InputTag inputTagJets_;
+        std::vector<std::string> inputJetsNames_;
+        std::vector<std::string> inputJetsSuffixes_;
         edm::EDGetTokenT<double> rhoToken_;        
         string bRegressionWeightfileName_;
         double y_mean_;
         double y_std_;
         string year_;
-   //     EDGetTokenT<View<flashgg::Jet> > jetToken_;
         std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
+        std::vector< std::string > bregtags;
 
         #ifdef CMSSW9
            tensorflow::Session* session;
@@ -118,18 +118,26 @@ namespace flashgg {
 
 
     bRegressionProducer::bRegressionProducer( const ParameterSet &iConfig ) :
-       // inputTagJets_( iConfig.getParameter<edm::InputTag>( "JetTag" )) ,
-        inputTagJets_( iConfig.getParameter<std::vector<edm::InputTag> > ( "JetTags" )) ,
-        nCollections_( iConfig.getParameter<unsigned int>( "NCollections" ) ),
+        inputJetsNames_( iConfig.getParameter<std::vector<std::string> > ( "JetNames" )) ,
+        inputJetsSuffixes_( iConfig.getParameter<std::vector<std::string> > ( "JetSuffixes" )) ,
         rhoToken_( consumes<double>(iConfig.getParameter<edm::InputTag>( "rhoFixedGridCollection" ) ) ),
         bRegressionWeightfileName_( iConfig.getUntrackedParameter<std::string>("bRegressionWeightfile")),
         y_mean_(iConfig.getUntrackedParameter<double>("y_mean")),
         y_std_(iConfig.getUntrackedParameter<double>("y_std")),
         year_(iConfig.getUntrackedParameter<std::string>("year"))
     {
-        //jetToken_= consumes<View<flashgg::Jet> >(inputTagJets_);
-        auto jetTags = iConfig.getParameter<std::vector<edm::InputTag> > ( "JetTags" ); 
+        for (auto & suffix : inputJetsSuffixes_) {
+            for (unsigned int i = 0; i < inputJetsNames_.size() ; i++) {
+                  auto name = inputJetsNames_[i];
+                  if (!suffix.empty()) inputTagJets_.push_back(edm::InputTag(name,suffix));
+                  else  inputTagJets_.push_back(edm::InputTag(name));
+                  std::string bregtag = suffix;
+                  bregtag.append(std::to_string(i));
+                  bregtags.push_back(bregtag);
+            }         
+        }
         for( auto & tag : inputTagJets_ ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
+
 
 
         #ifdef CMSSW9
@@ -185,9 +193,8 @@ namespace flashgg {
         Jet_mass = 0.;
         Jet_withPtd = 0.;
 
-        //produces<vector<flashgg::Jet> >();
-        for( unsigned int i = 0 ; i < nCollections_ ; i++ ) {
-            produces<vector<flashgg::Jet> > (std::to_string(i));
+        for (auto & bregtag : bregtags) {
+            produces<vector<flashgg::Jet> > (bregtag);
         }
     }
 
@@ -196,7 +203,7 @@ namespace flashgg {
     void bRegressionProducer::produce( Event &evt, const EventSetup & )
     {
  
-    for (unsigned int jet_col_idx = 0 ;jet_col_idx <jetTokens_.size()  ; jet_col_idx++) { // looping over 12 jet collections (associated to different vertecies)
+    for (unsigned int jet_col_idx = 0 ;jet_col_idx <jetTokens_.size()  ; jet_col_idx++) { // looping over 12 jet collections (associated to different vertecies) and all systematics
     
         // input jets
        Handle<View<flashgg::Jet> > jets;
@@ -366,13 +373,8 @@ namespace flashgg {
 
             jetColl->push_back( fjet );
         }
-        char number[2];
-        sprintf( number, "%u", jet_col_idx );
-        evt.put( std::move( jetColl ),number );
-      //  jetColl_vertecies.push_back(jetColl);
+        evt.put( std::move( jetColl ),bregtags[jet_col_idx] );
         }
-      //  evt.put( std::move( jetColl ) );
-     //   evt.put( std::move( jetColl_vertecies ) );
     }
     
     void bRegressionProducer::InitJet(){

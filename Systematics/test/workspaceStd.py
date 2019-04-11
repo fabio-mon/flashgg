@@ -700,30 +700,6 @@ else :
                          process.finalFilter*
                          process.tagsDumper)
 
-#if customize.doBJetRegression:
-#
-#    bregProducers = []
-#    bregJets = []
-#    
-#    from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
-#    from flashgg.Taggers.flashggbRegressionProducer_cfi import flashggbRegressionProducer
-#    recoJetCollections = UnpackedJetCollectionVInputTag
-#
-#
-#    for icoll,coll in enumerate(recoJetCollections):
-#        print "doing icoll "+str(icoll)
-#
-#        producer = flashggbRegressionProducer.clone(JetTag = coll)
-#
-#        setattr(process,"bRegProducer%d" %icoll,producer)
-#        bregProducers.append(producer)
-#        bregJets.append("bRegProducer%d" %icoll)
-#            
-#    process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
-##    process.bbggtree.inputTagJets=cms.VInputTag(bregJets)
-#    process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
-##    process.p.replace(process.jetSystematicsSequence,process.flashggUnpackedJets*process.jetSystematicsSequence+process.bregProducers)  #tried but no difference
-#
 
 if customize.doBJetRegression:
 
@@ -733,37 +709,29 @@ if customize.doBJetRegression:
     from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
     from flashgg.Taggers.flashggbRegressionProducer_cfi import flashggbRegressionProducer
     recoJetCollections = UnpackedJetCollectionVInputTag
-
     from flashgg.Taggers.flashggDoubleHTag_cfi import flashggDoubleHTag
 
+    jetsysts = cms.vstring()
+    jetnames = cms.vstring()
+    for jetsyst in [systlabels[0]]+jetsystlabels:
+        jetsysts.append(jetsyst)
+    for icoll,coll in enumerate(recoJetCollections):
+        jetnames.append(coll.moduleLabel)
+    producer = flashggbRegressionProducer.clone(JetSuffixes = jetsysts)
+    producer.JetNames = jetnames
 
-    for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
-    #for jetsyst in ['']:
-    # for jetsyst in [systlabel[0]]+jetsystlabels:
-       jetCollection = cms.VInputTag()
-       for icoll,coll in enumerate(recoJetCollections):
-            jetCollection.append(cms.InputTag(coll.moduleLabel,jetsyst))
-       if jetsyst != "" : producer = flashggbRegressionProducer.clone(JetTags = jetCollection)
-       else : producer = flashggbRegressionProducer.clone(JetTags = recoJetCollections)
-
-       setattr(process,"bRegProducer%s" %(jetsyst),producer)
-       bregProducers.append(producer)
-           
+    setattr(process,"bRegProducer",producer)
+    bregProducers.append(producer)
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
     process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
         
     if jetsystlabels!=[]:
-       # for jetsyst in [systlabel[0]]+jetsystlabels:
-        for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]:
+        for jetsyst in [systlabels[0]]+jetsystlabels:
             jetTagsSystematics = cms.VInputTag()
             for icoll,coll in enumerate(recoJetCollections):
-                jetTagsSystematics.append(cms.InputTag("bRegProducer%s" %(jetsyst), str(icoll)))
+                jetTagsSystematics.append(cms.InputTag("bRegProducer",str(jetsyst)+str(icoll)))
             getattr(process, "flashggDoubleHTag"+jetsyst).JetTags = jetTagsSystematics
             
-        print "New tag sequence  : ", process.flashggTagSequence 
-        print "New syst merger src  : ", process.flashggSystTagMerger.src 
-        print "New systematics tag sequence  : ", process.systematicsTagSequences
-
 
 
 if customize.doFiducial:

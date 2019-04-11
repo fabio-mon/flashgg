@@ -23,11 +23,13 @@ elif year == "2017":
    y_std_str = cms.untracked.double(0.28492164611816406)
    year_str = cms.untracked.string(year)
 
+jetnames = cms.vstring()
+for icoll,coll in enumerate(UnpackedJetCollectionVInputTag):
+    jetnames.append(coll.moduleLabel)
  
 flashggbRegressionProducer= cms.EDProducer('flashggbRegressionProducer',
-                                   #        JetTags=cms.InputTag("flashggUnpackedJets","0"),
-                                           JetTags= UnpackedJetCollectionVInputTag, # one jet collection per vertex
-                                           NCollections = cms.uint32(maxJetCollections),
+                                           JetNames = jetnames, # one jet collection per vertex
+                                           JetSuffixes = cms.vstring(''), #nominal and systematic variations 
                                            rhoFixedGridCollection = cms.InputTag('fixedGridRhoFastjetAll'),
                                            bRegressionWeightfile= bRegressionWeightfile_str, 
                                            y_mean = y_mean_str ,
