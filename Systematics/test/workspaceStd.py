@@ -754,8 +754,10 @@ if customize.doBJetRegression:
         
     if jetsystlabels!=[]:
        # for jetsyst in [systlabel[0]]+jetsystlabels:
-        for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]: 
-            jetTagsSystematics = cms.VInputTag("bRegProducer%s" %(jetsyst))
+        for jetsyst in ["","JECDown01sigma","JECUp01sigma","JERDown01sigma","JERUp01sigma"]:
+            jetTagsSystematics = cms.VInputTag()
+            for icoll,coll in enumerate(recoJetCollections):
+                jetTagsSystematics.append(cms.InputTag("bRegProducer%s" %(jetsyst), str(icoll)))
             getattr(process, "flashggDoubleHTag"+jetsyst).JetTags = jetTagsSystematics
             
         print "New tag sequence  : ", process.flashggTagSequence 

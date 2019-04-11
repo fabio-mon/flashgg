@@ -187,9 +187,7 @@ namespace flashgg {
 
         //produces<vector<flashgg::Jet> >();
         for( unsigned int i = 0 ; i < nCollections_ ; i++ ) {
-            char number[2];
-            sprintf( number, "%u", i );
-            produces<vector<flashgg::Jet> > (number);
+            produces<vector<flashgg::Jet> > (std::to_string(i));
         }
     }
 

@@ -169,7 +169,12 @@ def customizeTagSequence(customize,process):
 
     ## customize here (regression, kin-fit, MVA...)
     #if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( ["bRegProducer%d" % icoll for icoll,coll in enumerate(UnpackedJetCollectionVInputTag) ] )
-    if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( "bRegProducer" )
+    #if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( "bRegProducer" )
+    if customize.doBJetRegression : 
+            jetTagsSystematics = cms.VInputTag()
+            for icoll,coll in enumerate(UnpackedJetCollectionVInputTag):
+                jetTagsSystematics.append(cms.InputTag("bRegProducer", str(icoll)))
+            getattr(process, "flashggDoubleHTag").JetTags = jetTagsSystematics
 
     ## remove single Higgs tags
 
