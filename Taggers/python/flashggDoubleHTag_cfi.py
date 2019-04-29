@@ -13,23 +13,26 @@ year = settings.year
 #default values first
 year_norm = 0
 jetPUID = 'Loose'
-weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+#weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
 #weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
+weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
 MVAscalingValue=cms.double(1.)#scale MVA output before the cumulative transformation for 2017(2016 kept unchanged for simplicity, we will probably change that once we have all 3 years.)
 
 if year == "2016":
     year_norm = 0
     jetPUID = 'Loose'
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
+  #  weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
  #   weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
     MVAscalingValue=1.
 elif year == "2017":
     year_norm = 1
     jetPUID = 'Tight2017'
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
-    MVAscalingValue=1.011026
+  #  weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
+  #  MVAscalingValue=1.011026
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year1.weights.xml", 
    # weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
-   # MVAscalingValue=1.02309
+    MVAscalingValue=1.02309
 
 
 import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
@@ -61,14 +64,16 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    JetIDLevel = cms.string(jetPUID),
                                  #  globalRhoTag = cms.InputTag('fixedGridRhoAll'),
 
-                                   MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA
-                                   MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
-                                   MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
-                                   MJJBoundariesUpper = cms.vdouble(150.0,150.0,143.0,150.0,150.0,150.0,150.0,145.0,155.0,142.0,146.0,152.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
-                                #   MVABoundaries  = cms.vdouble(0.23,0.455, 0.709), # category boundaries for MVA
-                                #   MXBoundaries   = cms.vdouble(250., 336., 411., 556.), # .. and MX
-                                #   MJJBoundariesLower = cms.vdouble(70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
-                                #   MJJBoundariesUpper = cms.vdouble(190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                #   MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA
+                                #   MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
+                                #   MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                #   MJJBoundariesUpper = cms.vdouble(150.0,150.0,143.0,150.0,150.0,150.0,150.0,145.0,155.0,142.0,146.0,152.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                 #  MVABoundaries  = cms.vdouble(0.23,0.455, 0.709), # category boundaries for MVA
+                                  # MXBoundaries   = cms.vdouble(250., 336., 411., 556.), # .. and MX
+                                   MVABoundaries  = cms.vdouble(0.221,0.464, 0.722), # category boundaries for MVA
+                                   MXBoundaries   = cms.vdouble(250., 349., 432., 539.), # .. and MX
+                                   MJJBoundariesLower = cms.vdouble(70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
+                                   MJJBoundariesUpper = cms.vdouble(190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
                                    MVAConfig = cms.PSet(variables=cms.VPSet(), # variables are added below
                                                         classifier=cms.string("BDT::bdt"), # classifier name
                                                         weights=cms.FileInPath("%s"%weightsFile), 
@@ -79,8 +84,9 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
-                                   doCategorization=cms.bool(False),#do categorization based on MVA x MX or only fill first tree with all events
-                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
+                                   doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
+                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017_smallBDT.root"),#FIXME, this should be optional, is it?
+                                 #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
                                  #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    doReweight = flashggDoubleHReweight.doReweight,
@@ -154,7 +160,7 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
                       [#"leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
                        #"subleadingJet_bDis := subleadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",
-                   #    "Mjj := dijet().M()",
+                       "Mjj := dijet().M()",
                        "leadingJet_DeepCSV := leadJet().bDiscriminator('pfDeepCSVJetTags:probb')+leadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",#FIXME make the btag type configurable?
                        "subleadingJet_DeepCSV := subleadJet().bDiscriminator('pfDeepCSVJetTags:probb')+subleadJet().bDiscriminator('pfDeepCSVJetTags:probbb')",
                       # "absCosThetaStar_CS := abs(getCosThetaStar_CS_old(6500))",#FIXME get energy from somewhere?

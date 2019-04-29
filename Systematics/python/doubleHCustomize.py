@@ -4,7 +4,8 @@ def variablesToDump(customize):
     var_workspace = [
          #    "Mjj := dijet().M()",
              "eventNumber := eventNumber()",
-            "ttHScore := ttHScore()",
+          #  "ttHScore := ttHScore()",
+             "MX := MX()",
              "HHbbggMVA := MVA()"
     ]
     variables = [
@@ -152,10 +153,10 @@ def variablesToDumpData(customize):
            #  "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
            #  "sigmaMJets := getSigmaMOverMJets()",
              "HHbbggMVA := MVA()",
-           #  "MX := MX()",
+             "MX := MX()",
            #  "Mjj := dijet().M()",
            #  "eventNumber := eventNumber()",
-            "ttHScore := ttHScore()"
+         #   "ttHScore := ttHScore()"
              ]
    return variables
 

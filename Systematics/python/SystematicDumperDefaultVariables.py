@@ -28,7 +28,7 @@ defaultHistograms=["CMS_hgg_mass>>mass(160,100,180)",
                                      ]
 
 #systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
-systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()", "leadingJet_pt := leadJet().pt"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
+systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
 #systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()", "eventNumber[1,-999999.,999999.]:=eventNumber()"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
 systematicHistograms=["CMS_hgg_mass>>mass(160,100,180)"]
 
