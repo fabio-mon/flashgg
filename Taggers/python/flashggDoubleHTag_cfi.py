@@ -4,6 +4,7 @@ import FWCore.ParameterSet.Config as cms
 import flashgg.Taggers.dumperConfigTools as cfgTools
 
 from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
+from flashgg.MicroAOD.flashggJets_cfi import maxJetCollections
 import flashgg.Taggers.PUJID_wps as pujid
 
 from flashgg.Taggers.globalVariables_cff import globalVariables
@@ -14,24 +15,24 @@ year = settings.year
 year_norm = 0
 jetPUID = 'Loose'
 #weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
-#weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
-weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
+weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml"# path to TMVA weights
+#weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
 MVAscalingValue=cms.double(1.)#scale MVA output before the cumulative transformation for 2017(2016 kept unchanged for simplicity, we will probably change that once we have all 3 years.)
 
 if year == "2016":
     year_norm = 0
     jetPUID = 'Loose'
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
+   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year0.weights.xml", 
   #  weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2016.weights.xml", 
- #   weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year0.weights.xml", 
     MVAscalingValue=1.
 elif year == "2017":
     year_norm = 1
     jetPUID = 'Tight2017'
   #  weightsFile="flashgg/Taggers/data/HHTagger/training_with_10_12_2018_commonTraining_2017.weights.xml", 
   #  MVAscalingValue=1.011026
-    weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year1.weights.xml", 
-   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
+   # weightsFile="flashgg/Taggers/data/HHTagger/training_with_05_04_2019_trainingMjj_year1.weights.xml", 
+    weightsFile="flashgg/Taggers/data/HHTagger/training_with_19_03_2019_trainingMjj_year1.weights.xml", 
     MVAscalingValue=1.02309
 
 
@@ -39,10 +40,14 @@ import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
 from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
-                                   DiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'), # diphoton collection (will be replaced by systematics machinery at run time)
-                                   JetTags= UnpackedJetCollectionVInputTag, # one jet collection per vertex
+                                #   DiPhotonTag=cms.InputTag('flashggPreselectedDiPhotons'), # diphoton collection (will be replaced by systematics machinery at run time)
+                                #   JetTags= UnpackedJetCollectionVInputTag, # one jet collection per vertex
+                                   DiPhotonName = cms.string('flashggPreselectedDiPhotons'), # 
+                                   DiPhotonSuffixes = cms.vstring(''), #nominal and systematic variations 
+                                   JetsName = cms.string("bRegProducer"), # 
+                                   JetsCollSize = cms.uint32(maxJetCollections), #
+                                   JetsSuffixes = cms.vstring(''), #nominal and systematic variations 
                                    GenParticleTag = cms.InputTag( "flashggPrunedGenParticles" ), # to compute MC-truth info
-                                   SystLabel      = cms.string(""), # used by systematics machinery
                                    
                                    VetoConeSize   = cms.double(0.4),
                                    MinLeadPhoPt   = cms.double(1./3.),
@@ -68,10 +73,10 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                 #   MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX
                                 #   MJJBoundariesLower = cms.vdouble(98.0,95.0,97.0,96.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0,95.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
                                 #   MJJBoundariesUpper = cms.vdouble(150.0,150.0,143.0,150.0,150.0,150.0,150.0,145.0,155.0,142.0,146.0,152.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
-                                 #  MVABoundaries  = cms.vdouble(0.23,0.455, 0.709), # category boundaries for MVA
-                                  # MXBoundaries   = cms.vdouble(250., 336., 411., 556.), # .. and MX
-                                   MVABoundaries  = cms.vdouble(0.221,0.464, 0.722), # category boundaries for MVA
-                                   MXBoundaries   = cms.vdouble(250., 349., 432., 539.), # .. and MX
+                                   MVABoundaries  = cms.vdouble(0.23,0.455, 0.709), # category boundaries for MVA for large BDT
+                                   MXBoundaries   = cms.vdouble(250., 336., 411., 556.), # .. and MX for large BDT
+                                 #  MVABoundaries  = cms.vdouble(0.221,0.464, 0.722), # category boundaries for MVA for opt small BDT
+                                 #  MXBoundaries   = cms.vdouble(250., 349., 432., 539.), # .. and MX for opt small BDT
                                    MJJBoundariesLower = cms.vdouble(70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
                                    MJJBoundariesUpper = cms.vdouble(190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0,190.0),#for each category following the convention cat0=MX0 MVA0, cat1=MX1 MVA0, cat2=MX2 MVA0....
                                    MVAConfig = cms.PSet(variables=cms.VPSet(), # variables are added below
@@ -85,9 +90,9 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doMVAFlattening=cms.bool(True),#do transformation of cumulative to make it flat
                                    MVAscaling=cms.double(MVAscalingValue),
                                    doCategorization=cms.bool(True),#do categorization based on MVA x MX or only fill first tree with all events
-                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017_smallBDT.root"),#FIXME, this should be optional, is it?
+                                 #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017_smallBDT.root"),#FIXME, this should be optional, is it?
                                  #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20181210_common_2016_2017.root"),#FIXME, this should be optional, is it?
-                                 #  MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
+                                   MVAFlatteningFileName=cms.untracked.FileInPath("flashgg/Taggers/data/HHTagger/cumulativeTransformation_20190321_2016_2017.root"),#FIXME, this should be optional, is it?
                                    globalVariables=globalVariables,
                                    doReweight = flashggDoubleHReweight.doReweight,
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),

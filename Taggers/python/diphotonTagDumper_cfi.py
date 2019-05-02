@@ -6,3 +6,4 @@ tagsDumper = cms.EDAnalyzer('DiPhotonTagDumper',
                             **tagsDumpConfig.parameters_()
                             )
 
+

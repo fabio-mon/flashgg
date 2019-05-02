@@ -47,10 +47,18 @@ namespace flashgg {
         void StandardizeHLF();
         void StandardizeParticleList();
         
-        EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
+        std::string inputJetsName_;
+        std::vector<std::string> inputJetsSuffixes_;
+        unsigned int inputJetsCollSize_;
         std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
+        std::string inputDiPhotonName_;
+        std::vector<std::string> inputDiPhotonSuffixes_;
+       // EDGetTokenT<View<DiPhotonCandidate> > diPhotonToken_;
+        std::vector<edm::EDGetTokenT<edm::View<DiPhotonCandidate> > > diPhotonTokens_;
+
         EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
-        string systLabel_;
+
+        std::vector< std::string > systematicsLabels;
         std::map<std::string, float> ttHVars;
 
         double minLeadPhoPt_, minSubleadPhoPt_;
@@ -121,9 +129,8 @@ namespace flashgg {
     };
 
     DoubleHTagProducer::DoubleHTagProducer( const ParameterSet &iConfig ) :
-        diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
+      //  diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
         genParticleToken_( consumes<View<reco::GenParticle> >( iConfig.getParameter<InputTag> ( "GenParticleTag" ) ) ),
-        systLabel_( iConfig.getParameter<string> ( "SystLabel" ) ),
         minLeadPhoPt_( iConfig.getParameter<double> ( "MinLeadPhoPt" ) ),
         minSubleadPhoPt_( iConfig.getParameter<double> ( "MinSubleadPhoPt" ) ),
         scalingPtCuts_( iConfig.getParameter<bool> ( "ScalingPtCuts" ) ),
@@ -151,8 +158,35 @@ namespace flashgg {
             reweights_.push_back(consumes<float>(edm::InputTag(iConfig.getParameter<string>("reweight_producer") , name))) ;
         }
 
-        auto jetTags = iConfig.getParameter<std::vector<edm::InputTag> > ( "JetTags" ); 
+      //  diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
+        inputDiPhotonName_= iConfig.getParameter<std::string > ( "DiPhotonName" );
+        inputDiPhotonSuffixes_= iConfig.getParameter<std::vector<std::string> > ( "DiPhotonSuffixes" );
+        std::vector<edm::InputTag>  diPhotonTags;
+        for (auto & suffix : inputDiPhotonSuffixes_){ 
+            systematicsLabels.push_back(suffix);
+            std::string inputName = inputDiPhotonName_;
+            inputName.append(suffix);
+            if (!suffix.empty()) diPhotonTags.push_back(edm::InputTag(inputName));
+            else  diPhotonTags.push_back(edm::InputTag(inputDiPhotonName_));
+        }
+        for( auto & tag : diPhotonTags ) { diPhotonTokens_.push_back( consumes<edm::View<flashgg::DiPhotonCandidate> >( tag ) ); }
+
+        inputJetsName_= iConfig.getParameter<std::string> ( "JetsName" );
+        inputJetsCollSize_= iConfig.getParameter<unsigned int> ( "JetsCollSize" );
+        inputJetsSuffixes_= iConfig.getParameter<std::vector<std::string> > ( "JetsSuffixes" );
+        std::vector<edm::InputTag>  jetTags;
+        for (auto & suffix : inputJetsSuffixes_) {
+            if (!suffix.empty()) systematicsLabels.push_back(suffix);  //nominal is already put in the diphoton loop
+            for (unsigned int i = 0; i < inputJetsCollSize_ ; i++) {
+                  std::string bregtag = suffix;
+                  bregtag.append(std::to_string(i));
+                  jetTags.push_back(edm::InputTag(inputJetsName_,bregtag));
+            }         
+        }
         for( auto & tag : jetTags ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
+
+      //  auto jetTags = iConfig.getParameter<std::vector<edm::InputTag> > ( "JetTags" ); 
+      //  for( auto & tag : jetTags ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
 
         assert(is_sorted(mvaBoundaries_.begin(), mvaBoundaries_.end()) && "mva boundaries are not in ascending order (we count on that for categorization)");
         assert(is_sorted(mxBoundaries_.begin(), mxBoundaries_.end()) && "mx boundaries are not in ascending order (we count on that for categorization)");
@@ -231,7 +265,10 @@ namespace flashgg {
             session_ttH = tensorflow::createSession(graphDef_ttH);
         }
 
-        produces<vector<DoubleHTag>>();
+       // produces<vector<DoubleHTag>>();
+        for (auto & systname : systematicsLabels) {
+            produces<vector<DoubleHTag>>(systname);
+        }
         produces<vector<TagTruthBase>>();
     }
 
@@ -286,10 +323,6 @@ namespace flashgg {
     void DoubleHTagProducer::produce( Event &evt, const EventSetup & )
     {
 
-        // read diphotons
-        Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
-        evt.getByToken( diPhotonToken_, diPhotons );
-
         // update global variables
         globalVariablesComputer_.update(evt);
 
@@ -307,7 +340,6 @@ namespace flashgg {
         
 
         // prepare output
-        std::unique_ptr<vector<DoubleHTag> > tags( new vector<DoubleHTag> );
         std::unique_ptr<vector<TagTruthBase> > truths( new vector<TagTruthBase> );
         edm::RefProd<vector<TagTruthBase> > rTagTruth = evt.getRefBeforePut<vector<TagTruthBase> >();
 
@@ -342,7 +374,17 @@ namespace flashgg {
             truth_obj.setGenPV( higgsVtx );
             truths->push_back( truth_obj );
         }
+
+      // read diphotons
+      for (unsigned int diphoton_idx = 0; diphoton_idx < diPhotonTokens_.size(); diphoton_idx++) {//looping over all diphoton systematics
+        Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
+        evt.getByToken( diPhotonTokens_[diphoton_idx], diPhotons );
         
+        unsigned int loopOverJets = 1;
+        if (inputDiPhotonSuffixes_[diphoton_idx].empty()) loopOverJets = inputJetsSuffixes_.size();
+        for (unsigned int jet_col_idx = 0; jet_col_idx < loopOverJets; jet_col_idx++) {//looping over all jet systematics, only for nominal diphotons
+        std::unique_ptr<vector<DoubleHTag> > tags( new vector<DoubleHTag> );
+
         // loop over diphotons
         for( unsigned int candIndex = 0; candIndex < diPhotons->size() ; candIndex++ ) {
             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diPhotons->ptrAt( candIndex );
@@ -373,8 +415,10 @@ namespace flashgg {
             // find vertex associated to diphoton object
             size_t vtx = (size_t)dipho->jetCollectionIndex();
             // and read corresponding jet collection
+    
+
             edm::Handle<edm::View<flashgg::Jet> > jets;
-            evt.getByToken( jetTokens_[vtx], jets);
+            evt.getByToken( jetTokens_[jet_col_idx*inputJetsCollSize_+vtx], jets);  //take the corresponding vertex of current systematic
 
             // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
             std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
@@ -424,7 +468,10 @@ namespace flashgg {
             // prepare tag object
             DoubleHTag tag_obj( dipho, leadJet, subleadJet );
             tag_obj.setDiPhotonIndex( candIndex );
-            tag_obj.setSystLabel( systLabel_ );
+            if (loopOverJets == 1) 
+                tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
+            else  
+                tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
 
             if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
 
@@ -750,8 +797,13 @@ namespace flashgg {
           }
         }
 
+        if (loopOverJets == 1) 
+            evt.put( std::move( tags ),inputDiPhotonSuffixes_[diphoton_idx] );
+        else  
+            evt.put( std::move( tags ),inputJetsSuffixes_[jet_col_idx] );
+        }
+        }   
         evt.put( std::move( truths ) );
-        evt.put( std::move( tags ) );
     }
     
     void DoubleHTagProducer::StandardizeHLF()
