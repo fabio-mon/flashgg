@@ -406,11 +406,8 @@ print "------------------------------------------------------------"
 #from flashgg.Taggers.globalVariables_cff import globalVariables
 #globalVariables.extraFloats.rho = cms.InputTag("rhoFixedGridAll")
 
-
 #cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,jetsystlabels,jetSystematicsInputTags)
 cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags)
-
-print 'tags sorter :',process.flashggTagSorter.DiPhotonTag
 
 # Dump an object called NoTag for untagged events in order to track QCD weights
 # Will be broken if it's done for non-central values, so turn this on only for the non-syst tag sorter
@@ -489,11 +486,7 @@ process.load("flashgg.Taggers.diphotonTagDumper_cfi") ##  import diphotonTagDump
 import flashgg.Taggers.dumperConfigTools as cfgTools
 
 
-#from   flashgg.Taggers.tagsDumpers_cfi   import createTagDumper
-#process.tagsDumper = createTagDumper("DoubleHTag")
-
 process.tagsDumper.className = "DiPhotonTagDumper"
-#process.tagsDumper.className = "DiPhotonTagBaseDumper"
 process.tagsDumper.src = "flashggSystTagMerger"
 #process.tagsDumper.src = "flashggTagSystematics"
 process.tagsDumper.processId = "test"
@@ -562,11 +555,9 @@ definedSysts=set()
 process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")
 process.tagsDumper.reweighGGHforNNLOPS = cms.untracked.bool(bool(customize.processId.count("ggh")))
 process.tagsDumper.classifierCfg.remap=cms.untracked.VPSet()
-print 'tagList : ',tagList
 for tag in tagList: 
   tagName=tag[0]
   tagCats=tag[1]
-  print 'tagName and cats: : ',tagName,'  ',tagCats
   # remap return value of class-based classifier
   process.tagsDumper.classifierCfg.remap.append( cms.untracked.PSet( src=cms.untracked.string("flashgg%s"%tagName), dst=cms.untracked.string(tagName) ) )
   for systlabel in systlabels:
@@ -576,7 +567,6 @@ for tag in tagList:
           definedSysts.add(systlabel)
       else:
           cutstring = None
-         # cutstring = '1'
       if systlabel == "":
           currentVariables = variablesToUse
       else:
@@ -713,12 +703,7 @@ else :
 
 
 if customize.doubleHTagsOnly: 
-   # process.flashggTagSequence.replace(process.flashggUntagged, process.flashggDoubleHTagSequence)   
     hhc.doubleHTagMerger(process,systlabels)
-   # hhc.cloneTagSequenceForDoubleHSystematics(process,phosystlabels+jetsystlabels)
-
-    print 'process path : ', process.p
-    print 'SystMerger Before : ',process.flashggSystTagMerger.src
 
 if customize.doBJetRegression:
 
@@ -743,24 +728,11 @@ if customize.doBJetRegression:
     bregProducers.append(producer)
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
     process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
-       
-    print process.bregProducers
- 
- #   if jetsystlabels!=[]:
- #       for jetsyst in [systlabels[0]]+jetsystlabels:
- #           jetTagsSystematics = cms.VInputTag()
- #           for icoll,coll in enumerate(recoJetCollections):
- #               jetTagsSystematics.append(cms.InputTag("bRegProducer",str(jetsyst)+str(icoll)))
- #           getattr(process, "flashggDoubleHTag"+jetsyst).JetTags = jetTagsSystematics
  
     if len(systlabels)>1 :
         getattr(process, "flashggDoubleHTag").JetsSuffixes = cms.vstring([systlabels[0]]+jetsystlabels)
         getattr(process, "flashggDoubleHTag").DiPhotonSuffixes = cms.vstring([systlabels[0]]+phosystlabels)
    	
-    print process.p 
-    print 'here we print the tag sequence for DoubleHTag'
-    print process.flashggTagSequence
-
 
 if customize.doFiducial:
     if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) 

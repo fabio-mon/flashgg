@@ -166,18 +166,6 @@ def tagList(customize,process):
 
 def customizeTagSequence(customize,process):
     process.load("flashgg.Taggers.flashggDoubleHTag_cff")
- #   from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
-
-    ## customize here (regression, kin-fit, MVA...)
-    #if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( ["bRegProducer%d" % icoll for icoll,coll in enumerate(UnpackedJetCollectionVInputTag) ] )
-    #if customize.doBJetRegression : process.flashggDoubleHTag.JetTags = cms.VInputTag( "bRegProducer" )
-   # if customize.doBJetRegression : 
-   #         jetTagsSystematics = cms.VInputTag()
-   #         for icoll,coll in enumerate(UnpackedJetCollectionVInputTag):
-   #             jetTagsSystematics.append(cms.InputTag("bRegProducer", str(icoll)))
-   #         getattr(process, "flashggDoubleHTag").JetTags = jetTagsSystematics
-
-    ## remove single Higgs tags
 
     if customize.doubleHTagsOnly:
         process.flashggTagSequence.remove(process.flashggVBFTag)
@@ -195,10 +183,7 @@ def customizeTagSequence(customize,process):
         process.flashggTagSequence.remove(process.flashggVBFDiPhoDiJetMVA)
         process.flashggTagSequence.remove(process.flashggTTHDiLeptonTag)
         process.flashggTagSequence.remove(process.flashggUntagged)
-       # process.flashggTagSequence.remove(process.flashggTagSorter)
 
-
-     #   process.flashggTagSequence.replace(process.flashggUntagged, process.flashggDoubleHTagSequence)   
 
 def addNodesReweighting(customize,process):
     if customize.doubleHReweight > 0 :
@@ -209,11 +194,8 @@ def addNodesReweighting(customize,process):
     
 
 def doubleHTagMerger(process,systlabels=[]):
-    #process.flashggSystTagMerger = cms.EDProducer("DoubleHTagMerger",src=cms.VInputTag())
-   # process.p.replace(process.flashggSystTagMerger,process.flashggDoubleHTagSequence*process.flashggSystTagMerger)
     process.p.remove(process.flashggTagSorter)
     process.p.replace(process.flashggSystTagMerger,process.flashggDoubleHTagSequence*process.flashggTagSorter*process.flashggSystTagMerger)
-    #process.flashggSystTagMerger = cms.EDProducer("TagMerger",src=cms.VInputTag("flashggTagSorter"))
     for systlabel in systlabels:
          if systlabel!='':
              process.p.remove(getattr(process,'flashggTagSorter'+systlabel))
