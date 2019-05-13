@@ -98,7 +98,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
                                    
-                                   dottHTagger=cms.bool(False), #whether to do ttH killer. 
+                                   dottHTagger=cms.bool(True), #whether to do ttH killer. 
                                     
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
@@ -117,8 +117,8 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    ttHWeightfile2016 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/2017model.pb"), # for now
                                    ttHWeightfile2017 = cms.untracked.string(os.environ["CMSSW_BASE"]+"/src/flashgg/Taggers/data/ttHKiller/2017model.pb"), 
 
-                                   ttHScoreThreshold2016 = cms.double(0.0), #to be updated
-                                   ttHScoreThreshold2017 = cms.double(0.0), #to be updated
+                                   ttHScoreThreshold2016 = cms.double(0.21), #to be updated
+                                   ttHScoreThreshold2017 = cms.double(0.21), #to be updated
 
                                    # For standardization
                                    mean2017 = cms.vdouble(2.86329618e+02,  7.08058280e+01,  1.51705583e-01,  2.01783465e-03,

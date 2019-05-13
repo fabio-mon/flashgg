@@ -73,7 +73,7 @@ customize.options.register('doDoubleHTag',
                            'doDoubleHTag'
                            )
 customize.options.register('doDoubleHttHKiller',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHttHKiller'
@@ -133,13 +133,13 @@ customize.options.register('doPdfWeights',
                            'doPdfWeights'
                            )
 customize.options.register('dumpTrees',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpTrees'
                            )
 customize.options.register('dumpWorkspace',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'dumpWorkspace'
@@ -475,7 +475,9 @@ process.source = cms.Source ("PoolSource",
 #"/store/group/phys_higgs/HiggsExo/HH_bbgg/RunIIFall17-3_1_0/3_1_0/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/RunIIFall17-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/180830_190720/0000/myMicroAODOutputFile_2.root"
 #"root://cms-xrd-global.cern.ch//store/user/micheli/HHbbgg/MicroAod/HHbbgg_Signal_SM_20181120_splitting/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/HHbbgg_Signal_SM_20181120-1-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/190117_130615/0000/myMicroAODOutputFile_21.root"
 #"root://cms-xrd-global.cern.ch//store/user/micheli/HHbbgg/MicroAod/HHbbgg_Signal_SM_20181120_splitting/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/HHbbgg_Signal_SM_20181120-1-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/190117_130615/0000/myMicroAODOutputFile_15.root"
-"/store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_8/1/GluGluToHHTo2B2G_node_10_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg_extra_8-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/190228_195437/0000/myMicroAODOutputFile_2.root"
+#"/store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_8/1/GluGluToHHTo2B2G_node_10_13TeV-madgraph/RunIIMoriond17_HHbbgg_breg_extra_8-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/190228_195437/0000/myMicroAODOutputFile_2.root"
+#"root://cms-xrd-global.cern.ch//store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_1_0/3_1_0/ttHToGG_M125_13TeV_powheg_pythia8/RunIIFall17-3_1_0-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/180610_082856/0000/myMicroAODOutputFile_18.root"
+"root://cms-xrd-global.cern.ch//store/user/micheli/HHbbgg/MicroAod/RunIIMoriond17_HHbbgg_breg_extra_5/1/ttHToGG_M125_13TeV_powheg_pythia8_v2/RunIIMoriond17_HHbbgg_breg_extra_5-1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/180530_093447/0000/myMicroAODOutputFile_3.root"
 ))
 
 process.TFileService = cms.Service("TFileService",
@@ -489,7 +491,8 @@ import flashgg.Taggers.dumperConfigTools as cfgTools
 process.tagsDumper.className = "DiPhotonTagDumper"
 process.tagsDumper.src = "flashggSystTagMerger"
 #process.tagsDumper.src = "flashggTagSystematics"
-process.tagsDumper.processId = "test"
+#process.tagsDumper.processId = "test"
+process.tagsDumper.processId = customize.processId
 process.tagsDumper.dumpTrees = customize.dumpTrees
 process.tagsDumper.dumpWorkspace = customize.dumpWorkspace
 process.tagsDumper.dumpHistos = False

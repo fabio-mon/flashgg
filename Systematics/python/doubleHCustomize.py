@@ -4,7 +4,7 @@ def variablesToDump(customize):
     var_workspace = [
          #    "Mjj := dijet().M()",
              "eventNumber := eventNumber()",
-          #  "ttHScore := ttHScore()",
+            "ttHScore := ttHScore()",
              "MX := MX()",
              "HHbbggMVA := MVA()"
     ]
@@ -132,6 +132,7 @@ def variablesToDump(customize):
 
     if customize.dumpWorkspace == False : return variables
     else : return var_workspace
+   # return var_workspace  ##when running trees but only need to save workspace variables
 
 def variablesToDumpData(customize):
    variables = [
