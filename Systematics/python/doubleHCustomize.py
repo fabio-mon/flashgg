@@ -3,9 +3,9 @@ import FWCore.ParameterSet.Config as cms
 def variablesToDump(customize):
     var_workspace = [
          #    "Mjj := dijet().M()",
-             "eventNumber := eventNumber()",
-            "ttHScore := ttHScore()",
-             "HHbbggMVA := MVA()"
+        #"eventNumber := eventNumber()",
+        #"ttHScore := ttHScore()",
+        #"HHbbggMVA := MVA()"
     ]
     variables = [
         "leadingJet_bDis := leadJet().bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags')",#FIXME make the btag type configurable?
@@ -151,11 +151,11 @@ def variablesToDumpData(customize):
            #  "leadingJet_bRegNNResolution := leadJet().userFloat('bRegNNResolution')",
            #  "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
            #  "sigmaMJets := getSigmaMOverMJets()",
-             "HHbbggMVA := MVA()",
+           #  "HHbbggMVA := MVA()",
            #  "MX := MX()",
            #  "Mjj := dijet().M()",
            #  "eventNumber := eventNumber()",
-            "ttHScore := ttHScore()"
+           # "ttHScore := ttHScore()"
              ]
    return variables
 

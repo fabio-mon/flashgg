@@ -1282,9 +1282,12 @@
                 "weights": 12000.0
             }, 
             {
-                "bad": true, 
+                "bad": false, 
+                "events": 12000, 
                 "name": "/store/user/micheli/HHbbgg/MicroAod/HHbbgg_Signal_SM_20181120_splitting/1/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/HHbbgg_Signal_SM_20181120-1-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/190117_130615/0000/myMicroAODOutputFile_15.root", 
-                "nevents": 12000
+                "nevents": 12000, 
+                "totEvents": 12000, 
+                "weights": 12000.0
             }
         ], 
         "vetted": true

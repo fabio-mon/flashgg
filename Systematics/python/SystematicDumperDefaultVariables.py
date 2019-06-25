@@ -7,7 +7,10 @@ minimalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass",
 
 minimalHistograms = []
 
-minimalNonSignalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
+#minimalNonSignalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass"]#,"centralObjectWeight[1,-999999.,999999.] := centralWeight"]
+minimalNonSignalVariables = ["CMS_hgg_mass[160,100,180]:=diPhoton().mass",
+                             "dZ[40,-20.,20.]:=(tagTruth().genPV().z-diPhoton().vtx().z)",
+                             "centralObjectWeight[1,-999999.,999999.] := centralWeight"]
 
 minimalVariablesHTXS = minimalVariables+["stage0cat[72,9.5,81.5] := tagTruth().HTXSstage0cat"]
 
