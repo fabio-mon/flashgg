@@ -148,6 +148,11 @@ class DoubleHCustomize():
                "ttHScore := ttHScore()",
              ]
 
+        #####################################################################
+        #fabio temp to run the others fgg tags
+        variables = []
+        var_workspace = []
+
         if self.customize.dumpWorkspace == False :
             return variables
         else :
@@ -201,6 +206,7 @@ class DoubleHCustomize():
 
 
     def customizeTagSequence(self):
+        print "I am here hello!"
         self.process.load("flashgg.Taggers.flashggDoubleHTag_cff")
 
         ## customize meta conditions
@@ -214,6 +220,10 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_std"])
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
+
+        ## add DoubleHTag to the flashggTagSequence and remove the untagged
+        self.process.flashggTagSequence.replace(self.process.flashggUntagged, self.process.flashggUntagged+self.process.flashggDoubleHTag)
+        #self.process.flashggTagSequence.replace(self.process.flashggUntagged, self.process.flashggDoubleHTag)
 
         ## remove single Higgs tags
 

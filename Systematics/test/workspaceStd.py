@@ -48,13 +48,13 @@ customize.options.register('doubleHReweight',
                            'doubleHReweight'
                            )
 customize.options.register('doDoubleHTag',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHTag'
                            )
 customize.options.register('doDoubleHttHKiller',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHttHKiller'
@@ -72,7 +72,7 @@ customize.options.register('doDoubleHGenAnalysis',
                            'doDoubleHGenAnalysis'
                            )
 customize.options.register('doBJetRegression',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doBJetRegression'
@@ -108,7 +108,7 @@ customize.options.register('doSystematics',
                            'doSystematics'
                            )
 customize.options.register('doPdfWeights',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doPdfWeights'
@@ -238,8 +238,8 @@ if customize.tthTagsOnly:
 if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize 
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
-    minimalVariables += hhc.variablesToDump()
-    systematicVariables = hhc.systematicVariables()
+    #minimalVariables += hhc.variablesToDump()
+    #systematicVariables = hhc.systematicVariables()
 
 print 'here we print the tag sequence after'
 print process.flashggTagSequence
@@ -376,7 +376,7 @@ cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels
 
 # Dump an object called NoTag for untagged events in order to track QCD weights
 # Will be broken if it's done for non-central values, so turn this on only for the non-syst tag sorter
-process.flashggTagSorter.CreateNoTag = True # MUST be after tag sequence cloning
+process.flashggTagSorter.CreateNoTag = False # MUST be after tag sequence cloning
 
 ###### Dumper section
 
