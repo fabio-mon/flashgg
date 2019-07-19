@@ -14,7 +14,6 @@
 #include "flashgg/DataFormats/interface/VHLeptonicLooseTag.h"
 #include "flashgg/DataFormats/interface/WHLeptonicTag.h"
 #include "flashgg/DataFormats/interface/ZHLeptonicTag.h"
-#include "flashgg/DataFormats/interface/ZHLeptonicTag.h"
 
 
 #include "flashgg/Taggers/interface/CollectionDumper.h"
