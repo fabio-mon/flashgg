@@ -229,6 +229,13 @@ namespace flashgg {
                 if ( debug_ ) {
                     std::cout << "[TagSorter DEBUG] Priority " << priority << " Tag Found! Tag entry "<< chosen_i  << " with sumPt "
                               << TagVectorEntry->ptrAt(chosen_i)->sumPt() << ", systLabel " << TagVectorEntry->ptrAt(chosen_i)->systLabel() << std::endl;
+                    if(priority==4)
+                    {
+                        std::cout << "I FOUND A TTHHADRONIC TAG :(( i am gonna crash" << std::endl;
+                        getchar();
+                        std::cout << "or maybe not.." <<std::endl;
+                    }
+
                 }
                 if ( storeOtherTagInfo_ ) {
                     if ( debug_ ) {
@@ -253,6 +260,9 @@ namespace flashgg {
         if ( SelectedTag->size() == 1  && storeOtherTagInfo_ && debug_ ) {
             if ( SelectedTag->back().nOtherTags() > 0 ) {
                 std::cout << "[TagSorter DEBUG] List of other tags: (" << SelectedTag->back().nOtherTags() << " total):" << std::endl;
+                std::cout << "I AM HERE :(( i am gonna crash" << std::endl;
+                getchar();
+                std::cout << "or maybe not.." <<std::endl;
                 for ( unsigned i = 0 ; i < SelectedTag->back().nOtherTags() ; i++) {
                     std::cout << "[TagSorter DEBUG]  (tag_t,cat,dipho_i)=(" << SelectedTag->back().otherTagType(i) << "," 
                               << SelectedTag->back().otherTagCategory(i) << ","
