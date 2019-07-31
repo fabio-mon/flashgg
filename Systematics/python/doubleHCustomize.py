@@ -215,6 +215,9 @@ class DoubleHCustomize():
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
 
+        ## add doubleHtag to standard sequence
+        self.process.flashggTagSequence.replace(self.process.flashggUntagged,self.process.flashggUntagged*self.process.flashggDoubleHTag)
+
         ## remove single Higgs tags
 
         if self.customize.doubleHTagsOnly:

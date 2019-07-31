@@ -29,6 +29,12 @@ elesystlabels = []
 musystlabels = []
 
 from flashgg.MetaData.JobConfig import customize
+customize.options.register('NOtthTags',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                                              VarParsing.VarParsing.varType.bool,
+                           'NOtthTags'
+                           )
 customize.options.register('tthTagsOnly',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -235,11 +241,17 @@ if customize.tthTagsOnly:
     process.flashggTagSequence.remove(process.flashggVBFMVA)
     process.flashggTagSequence.remove(process.flashggVBFDiPhoDiJetMVA)
 
+if customize.NOtthTags:
+    process.flashggTagSequence.remove(process.flashggTTHHadronicTag)
+    process.flashggTagSequence.remove(process.flashggTTHLeptonicTag)
+    process.flashggTagSequence.remove(process.flashggTTHDiLeptonTag)
+
 if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize 
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhc.variablesToDump()
     systematicVariables = hhc.systematicVariables()
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet( cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')) )
 
 print 'here we print the tag sequence after'
 print process.flashggTagSequence
@@ -248,10 +260,25 @@ if customize.doFiducial:
     print 'we do fiducial and we change tagsorter'
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(     cms.PSet(TagName = cms.InputTag('flashggSigmaMoMpToMTag')) )
 
+
+if customize.NOtthTags:
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   #cms.PSet(TagName = cms.InputTag('flashggTTHDiLeptonTag')), 
+        #cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
+        cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
+        cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
+        cms.PSet(TagName = cms.InputTag('flashggVHLeptonicLooseTag')),
+        #cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')),   
+        cms.PSet(TagName = cms.InputTag('flashggVBFTag')),     
+        cms.PSet(TagName = cms.InputTag('flashggVHMetTag')),
+        cms.PSet(TagName = cms.InputTag('flashggVHHadronicTag')),
+        cms.PSet(TagName = cms.InputTag('flashggUntagged')) )
+
+
 if customize.tthTagsOnly:
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHDiLeptonTag')),
         cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')),
         cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')) )
+
 
     print "customize.processId:",customize.processId
 
@@ -310,10 +337,10 @@ if is_signal:
             jetsystlabels.append("JEC%s01sigma" % direction)
             jetsystlabels.append("JER%s01sigma" % direction)
             jetsystlabels.append("PUJIDShift%s01sigma" % direction)
-            metsystlabels.append("metJecUncertainty%s01sigma" % direction)
-            metsystlabels.append("metJerUncertainty%s01sigma" % direction)
-            metsystlabels.append("metPhoUncertainty%s01sigma" % direction)
-            metsystlabels.append("metUncUncertainty%s01sigma" % direction)
+            #metsystlabels.append("metJecUncertainty%s01sigma" % direction)
+            #metsystlabels.append("metJerUncertainty%s01sigma" % direction)
+            #metsystlabels.append("metPhoUncertainty%s01sigma" % direction)
+            #metsystlabels.append("metUncUncertainty%s01sigma" % direction)
             variablesToUse.append("UnmatchedPUWeight%s01sigma[1,-999999.,999999.] := weight(\"UnmatchedPUWeight%s01sigma\")" % (direction,direction))
             variablesToUse.append("MvaLinearSyst%s01sigma[1,-999999.,999999.] := weight(\"MvaLinearSyst%s01sigma\")" % (direction,direction))
             variablesToUse.append("LooseMvaSF%s01sigma[1,-999999.,999999.] := weight(\"LooseMvaSF%s01sigma\")" % (direction,direction))
@@ -446,6 +473,23 @@ elif customize.doubleHTagsOnly:
     tagList = hhc.tagList
     print "taglist is:"
     print tagList
+elif customize.NOtthTags:
+    tagList=[
+        ["NoTag",0],
+        ["UntaggedTag",4],
+        ["VBFTag",3],
+        ["ZHLeptonicTag",0],
+        ["WHLeptonicTag",0],
+        ["VHLeptonicLooseTag",0],
+        ["VHMetTag",0],
+        ["VHHadronicTag",0],
+#        ["TTHHadronicTag",3],
+#        ["TTHLeptonicTag",2]
+#        ["TTHDiLeptonTag",0]
+        ]
+    print "taglist is:"
+    print tagList
+
 else:
     tagList=[
         ["NoTag",0],
@@ -490,7 +534,7 @@ for tag in tagList:
           else:
               currentVariables = []
       isBinnedOnly = (systlabel !=  "")
-      if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+      if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG"))  or (customize.datasetName() and customize.datasetName().count("HHTo2B2G")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
           print "Signal MC central value, so dumping PDF weights"
           dumpPdfWeights = True
           nPdfWeights = 60
@@ -632,11 +676,15 @@ if customize.doBJetRegression:
     bregProducers.append(producer)
     process.bregProducers = cms.Sequence(reduce(lambda x,y: x+y, bregProducers))
     process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
-    
- 
+
 if customize.doDoubleHTag:
     hhc.doubleHTagRunSequence(systlabels,jetsystlabels,phosystlabels)
-  
+
+
+print 'here we print the tag sequence after hhc.doubleHTagRunSequence'
+print process.flashggTagSequence
+
+
 
 if customize.doFiducial:
     if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) 
