@@ -442,10 +442,28 @@ elif customize.tthTagsOnly:
         ["TTHLeptonicTag",4],
         ["TTHDiLeptonTag",0]
         ]
-elif customize.doubleHTagsOnly:
-    tagList = hhc.tagList
-    print "taglist is:"
-    print tagList
+
+elif customize.doDoubleHTag:
+    if customize.doubleHTagsOnly:
+        tagList = hhc.tagList
+    else:
+        tagList=[
+            ["DoubleHTag",12],
+            ["NoTag",0],
+            ["UntaggedTag",4],
+            ["VBFTag",3],
+            ["ZHLeptonicTag",0],
+            ["WHLeptonicTag",0],
+            ["VHLeptonicLooseTag",0],
+            ["VHMetTag",0],
+            ["VHHadronicTag",0],
+            ["TTHHadronicTag",4],
+            ["TTHLeptonicTag",4],
+            ["TTHDiLeptonTag",0]
+        ]
+
+ 
+
 else:
     tagList=[
         ["NoTag",0],
@@ -459,7 +477,11 @@ else:
         ["TTHHadronicTag",4],
         ["TTHLeptonicTag",4],
         ["TTHDiLeptonTag",0]
-        ]
+    ]
+
+print "taglist is:"
+print tagList
+
 
 definedSysts=set()
 process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")
