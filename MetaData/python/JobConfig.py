@@ -421,8 +421,8 @@ class JobConfig(object):
             self.readProcessIdMap(self.options.processIdMap)
         
         if self.useAAA:
-       #     self.filePrepend = "root://xrootd-cms.infn.it/"
-            self.filePrepend = "root://cms-xrd-global.cern.ch/"
+            self.filePrepend = "root://xrootd-cms.infn.it/"
+       #     self.filePrepend = "root://cms-xrd-global.cern.ch/"
         elif self.useEOS:
             self.filePrepend = "root://eoscms.cern.ch//eos/cms"
         
