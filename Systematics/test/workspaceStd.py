@@ -35,6 +35,18 @@ customize.options.register('tthTagsOnly',
                            VarParsing.VarParsing.varType.bool,
                            'tthTagsOnly'
                            )
+customize.options.register('FirsttthLepSecondHH',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'FirsttthLepSecondHH'
+                           )
+customize.options.register('HHtagaftertthhadronic',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'HHtagaftertthhadronic'
+                           )
 customize.options.register('doubleHTagsOnly',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -248,10 +260,46 @@ if customize.doFiducial:
     print 'we do fiducial and we change tagsorter'
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(     cms.PSet(TagName = cms.InputTag('flashggSigmaMoMpToMTag')) )
 
-if customize.tthTagsOnly:
+if not customize.doDoubleHTag:
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
+                                                              cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHLeptonicLooseTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')),   
+                                                              cms.PSet(TagName = cms.InputTag('flashggVBFTag')),     
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHMetTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHHadronicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggUntagged')) )
+    
+elif customize.FirsttthLepSecondHH:
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
+                                                              cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHLeptonicLooseTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')),   
+                                                              cms.PSet(TagName = cms.InputTag('flashggVBFTag')),     
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHMetTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHHadronicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggUntagged')) )
+
+elif customize.HHtagaftertthhadronic:
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
+                                                              cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHLeptonicLooseTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')),   
+                                                              cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVBFTag')),     
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHMetTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggVHHadronicTag')),
+                                                              cms.PSet(TagName = cms.InputTag('flashggUntagged')) )
+
+elif customize.tthTagsOnly:
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHDiLeptonTag')),
         cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')),
         cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')) )
+
 
     print "customize.processId:",customize.processId
 
@@ -278,7 +326,7 @@ useEGMTools(process)
 
 # Only run systematics for signal events
 # convention: ggh vbf wzh (wh zh) tth
-signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance"]
+signal_processes = ["ggh","vh","qqh","vbf","wzh","wh","zh","bbh","thq","thw","tth","hh","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance"]
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 #if customize.processId.count("h_") or customize.processId.count("vbf_") or customize.processId.count("Acceptance") or customize.processId.count("hh_"): 
 if is_signal:
