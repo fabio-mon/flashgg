@@ -250,7 +250,8 @@ if customize.tthTagsOnly:
 if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize 
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
-    #minimalVariables += hhc.variablesToDump()
+    if customize.doubleHTagsOnly: 
+        minimalVariables += hhc.variablesToDump()
     #systematicVariables = hhc.systematicVariables()
 
 print 'here we print the tag sequence after'
@@ -271,6 +272,12 @@ if not customize.doDoubleHTag:
                                                               cms.PSet(TagName = cms.InputTag('flashggVHHadronicTag')),
                                                               cms.PSet(TagName = cms.InputTag('flashggUntagged')) )
     
+
+
+elif customize.doubleHTagsOnly:
+    process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')) )
+
+
 elif customize.FirsttthLepSecondHH:
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
                                                               cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
