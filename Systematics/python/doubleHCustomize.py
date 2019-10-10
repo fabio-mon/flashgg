@@ -150,8 +150,8 @@ class DoubleHCustomize():
 
         #####################################################################
         #fabio temp to run the others fgg tags
-        variables = []
-        var_workspace = []
+        #variables = []
+        #var_workspace = []
 
         if self.customize.dumpWorkspace == False :
             return variables
