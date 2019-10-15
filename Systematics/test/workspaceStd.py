@@ -59,6 +59,12 @@ customize.options.register('doubleHReweight',
                            VarParsing.VarParsing.varType.int,
                            'doubleHReweight'
                            )
+customize.options.register('singleHReweight',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'singleHReweight'
+                           )
 customize.options.register('doDoubleHTag',
                            True,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -254,6 +260,13 @@ if customize.doDoubleHTag:
         minimalVariables += hhc.variablesToDump()
         #systematicVariables = hhc.systematicVariables()
 
+
+if customize.singleHReweight:
+    from flashgg.Taggers.flashggSingleHReweight_cfi import flashggSingleHReweight
+    process.flashggSingleHReweight = flashggSingleHReweight
+    process.flashggTagSequence.replace(process.flashggDiPhotonMVA, process.flashggDiPhotonMVA+process.flashggSingleHReweight)
+
+
 print 'here we print the tag sequence after'
 print process.flashggTagSequence
 
@@ -336,10 +349,17 @@ is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x
 #if customize.processId.count("h_") or customize.processId.count("vbf_") or customize.processId.count("Acceptance") or customize.processId.count("hh_"): 
 if is_signal:
     print "Signal MC, so adding systematics and dZ"
+
     if customize.doHTXS:
         variablesToUse = minimalVariablesHTXS
     else:
         variablesToUse = minimalVariables
+
+    if customize.singleHReweight:
+        variablesToUse.append("kl := GetSingleHkl()");
+        variablesToUse.append("kt := GetSingleHkt()");
+        variablesToUse.append("ktklWeights := GetSingleHktklWeights()");
+
     if customize.doFiducial:
         variablesToUse.extend(fc.getGenVariables(True))
         variablesToUse.extend(fc.getRecoVariables(True))
@@ -571,6 +591,7 @@ for tag in tagList:
           nPdfWeights = 60
           nAlphaSWeights = 2
           nScaleWeights = 9
+
       else:
           print "Data, background MC, or non-central value, or no systematics: no PDF weights"
           dumpPdfWeights = False

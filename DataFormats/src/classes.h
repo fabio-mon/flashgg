@@ -44,6 +44,7 @@
 #include "flashgg/DataFormats/interface/TagCandidate.h"
 #include "flashgg/DataFormats/interface/TagAndProbeCandidate.h" //spigazzi
 #include "flashgg/DataFormats/interface/DoubleHTag.h"
+#include "flashgg/DataFormats/interface/SingleHReweight.h"
 
 #include <vector>
 #include <map>
@@ -207,6 +208,10 @@ namespace  {
         flashgg::DoubleHTag hh;
         std::vector<flashgg::DoubleHTag> vec_hh;
         edm::Wrapper<std::vector<flashgg::DoubleHTag> > wrp_vec_hh;
+
+        flashgg::SingleHReweight hrew;
+        std::vector<flashgg::SingleHReweight> vec_hrew;
+        edm::Wrapper<std::vector<flashgg::SingleHReweight> > wrp_vec_hrew;
 
         flashgg::TTHDiLeptonTag tthd;
         std::vector<flashgg::TTHDiLeptonTag> vec_tthd;
