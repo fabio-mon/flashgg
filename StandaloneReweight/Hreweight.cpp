@@ -78,7 +78,7 @@ int main(int argc, char** argv)
       r = new SingleHReweighter::SingleHReweighter(conf,process);
 
     //loop over events
-    cout<<"Reading tree "<<inchain->GetName()<<endl;
+    cout<<"Reading tree "<<treename<<endl;
     Long64_t nentries = inchain->GetEntries();
     cout<<nentries<<" entries"<<endl;
     for(long ientry=0;ientry<nentries; ++ientry)

@@ -94,7 +94,7 @@ float DoubleHReweighter::functionGF(float kl, float kt, float c2, float cg, floa
 float DoubleHReweighter::getWeight( int targetNode,float gen_mHH, float gen_cosTheta)
 {
     float w = 0.;
-    pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
+    pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, fabs(gen_cosTheta));
     float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
     if (denom == 0) 
         return 0;
@@ -122,7 +122,7 @@ float DoubleHReweighter::getWeight( int targetNode,float gen_mHH, float gen_cosT
 float DoubleHReweighter::getWeight(float kl, float kt, float gen_mHH, float gen_cosTheta)
 {
     float w = 0.;
-    pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, gen_cosTheta);
+    pair<int,int> bins = find2DBin(hist_inputMix_, gen_mHH, fabs(gen_cosTheta));
     float denom = hist_inputMix_->GetBinContent(bins.first, bins.second);
     if (denom == 0) 
         return 0;
