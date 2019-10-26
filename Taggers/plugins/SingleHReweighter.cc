@@ -7,10 +7,10 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/EDMException.h"
 
+#include "flashgg/DataFormats/interface/SingleHReweight.h"
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/Jet.h"
 #include "flashgg/DataFormats/interface/DiPhotonMVAResult.h"
-#include "flashgg/DataFormats/interface/SingleHReweight.h"
 #include "flashgg/DataFormats/interface/TagTruthBase.h"
 #include "DataFormats/Common/interface/RefToPtr.h"
 
@@ -62,9 +62,7 @@ namespace flashgg {
         C1_process_pTH_map_(iConfig.getParameter  <edm::ParameterSet> ("C1_process_pTH_map")),
         EWK_process_pTH_map_(iConfig.getParameter <edm::ParameterSet> ("EWK_process_pTH_map"))
     {
-        produces<float>("kl");
-        produces<float>("kt");
-        produces<float>("ktklWeights");
+        produces<SingleHReweight>("ktklWeights");
     }   
 
     int SingleHReweighter::FindBin(const float &pTH)
@@ -107,31 +105,19 @@ namespace flashgg {
         float pTH = 50.;
 
         //compute the reweights for a given kl,kt granularity
-        std::vector<float> weights;
-        std::vector<float> kls;
-        std::vector<float> kts;
+        std::unique_ptr<SingleHReweight> rewobj( new SingleHReweight ); 
         if (selHiggses.size()==1){
             for(unsigned int ikl=0; ikl<Nkl_; ++ikl){
                 float kl = klmin_+ (ikl+0.5) * (klmax_-klmin_);
                 for(unsigned int ikt=0;ikt<Nkt_; ++ikt){
                     float kt = ktmin_+ (ikt+0.5) * (ktmax_-ktmin_);
-                    kls.push_back(kl);
-                    kts.push_back(kt);
-                    weights.push_back(getWeight(process,pTH,kl,kt));
+                    rewobj->Appendweight(kl,kt,getWeight(process,pTH,kl,kt));
                 }
             }
         }
-        
-        //prepare output object
-        SingleHReweight singlehrew_obj(kls, kts, weights);
 
         //add the collection to the event
-        std::unique_ptr<float>  final_weights( new float( weights[Nkl_]) );        
-        std::unique_ptr<float>  final_kls(     new float(     kls[Nkl_]) );        
-        std::unique_ptr<float>  final_kts(     new float(     kts[Nkl_]) );        
-        evt.put( std::move(final_weights) , "ktklWeights");
-        evt.put( std::move(final_kls)     , "kl");
-        evt.put( std::move(final_kts)     , "kt");
+        evt.put( std::move(rewobj) , "ktklWeights");
     }
 }
 

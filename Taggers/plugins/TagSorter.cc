@@ -16,6 +16,7 @@
 #include "DataFormats/Common/interface/RefToPtr.h"
 #include "flashgg/DataFormats/interface/VBFTag.h"
 #include "flashgg/DataFormats/interface/NoTag.h"
+#include "flashgg/DataFormats/interface/SingleHReweight.h"
 
 #include "SimDataFormats/HTXS/interface/HiggsTemplateCrossSections.h"
 
@@ -71,10 +72,13 @@ namespace flashgg {
         bool storeOtherTagInfo_;
         bool blindedSelectionPrintout_;
 
+        EDGetTokenT<SingleHReweight> rewobjToken_;
+
         bool createNoTag_;
         EDGetTokenT<int> stage0catToken_, stage1catToken_, njetsToken_;
         EDGetTokenT<float> pTHToken_,pTVToken_;
         EDGetTokenT<HTXS::HiggsClassification> newHTXSToken_;
+
 
         std::vector<std::tuple<DiPhotonTagBase::tag_t,int,int> > otherTags_; // (type,category,diphoton index)
 
@@ -117,6 +121,9 @@ namespace flashgg {
             TagPriorityRanges.emplace_back( tag.label(), c1, c2, i );
         }
 
+        rewobjToken_ = consumes<SingleHReweight>( edm::InputTag("ktklWeights") );
+
+
         ParameterSet HTXSps = iConfig.getParameterSet( "HTXSTags" );
         stage0catToken_ = consumes<int>( HTXSps.getParameter<InputTag>("stage0cat") );
         stage1catToken_ = consumes<int>( HTXSps.getParameter<InputTag>("stage1cat") );
@@ -131,6 +138,7 @@ namespace flashgg {
 
     void TagSorter::produce( Event &evt, const EventSetup & )
     {
+
         unique_ptr<edm::OwnVector<flashgg::DiPhotonTagBase> > SelectedTag( new edm::OwnVector<flashgg::DiPhotonTagBase> );
         unique_ptr<edm::OwnVector<flashgg::TagTruthBase> > SelectedTagTruth( new edm::OwnVector<flashgg::TagTruthBase> );
 
@@ -219,8 +227,20 @@ namespace flashgg {
                               << "] - " << tpr->name << " chosen_i=" << chosen_i << " - consider investigating!" << std::endl;
                 }
 
-
+                
                 SelectedTag->push_back( *TagVectorEntry->ptrAt( chosen_i ) );
+
+                //dump here the additional weights
+                Handle<SingleHReweight> rewobj;
+                evt.getByToken(rewobjToken_, rewobj);
+
+                std::cout<<"--------------------\n\n\n-------------------------\n\n\n my test \n\n\n"<<std::endl ;
+                std::cout<<"rewobj->size()="<<rewobj->size()<<endl;
+
+                //SelectedTag->back().AddWeightVector(string("ktklWeights"),rewobj->GetSingleHktklWeights());
+                //SelectedTag->back().AddWeightVector(string("kl"),rewobj->GetSingleHkl());
+                //SelectedTag->back().AddWeightVector(string("kt"),rewobj->GetSingleHkt());
+
                 edm::Ptr<TagTruthBase> truth = TagVectorEntry->ptrAt( chosen_i )->tagTruth();
                 if( truth.isNonnull() ) {
                     SelectedTagTruth->push_back( *truth );

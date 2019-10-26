@@ -16,8 +16,11 @@ namespace flashgg {
         virtual ~WeightedObject();
 
         float weight( string key ) const;
+        //vector<float> weightvector( string key ) const;
         float centralWeight() const { return weight( central_key ); }
         void setWeight( string key, float val );
+        //void AddWeightVector(string key, const vector<float> &vals);
+
         void setCentralWeight( float val ) { setWeight( central_key, val ); }
         bool hasWeight( string key ) const;
         void includeWeights( const WeightedObject &other, bool usecentralifnotfound = true );
@@ -28,6 +31,8 @@ namespace flashgg {
     private:
         vector<string> _labels;
         vector<float> _weights;
+        vector<string> _vlabels;
+        vector<vector<float> > _vweights;
         static constexpr const char *central_key = "Central";
     };
 }

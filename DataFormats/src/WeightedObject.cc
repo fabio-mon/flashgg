@@ -20,6 +20,18 @@ namespace flashgg {
         }
     }
 
+    /*
+    void WeightedObject::AddWeightVector(string key, const vector<float> &vals)
+    {
+        auto found_vlabel = std::lower_bound( _vlabels.begin(), _vlabels.end(), key );
+        if( found_vlabel == _vlabels.end() || *found_vlabel != key ) {
+            _vweights.insert( _vweights.begin() + std::distance( _vlabels.begin(), found_vlabel ), vals );
+            _vlabels.insert( found_vlabel, key );
+        } else {
+            _vweights[std::distance( _vlabels.begin(), found_vlabel )] = vals;
+        }
+    }
+    */
 
     bool WeightedObject::hasWeight( string key ) const
     {
@@ -35,6 +47,18 @@ namespace flashgg {
         }
         return _weights[std::distance( _labels.begin(), found_label )];
     }
+    /*
+    vector<float> WeightedObject::weightvector( string key ) const
+    {
+        auto found_vlabel = std::lower_bound( _vlabels.begin(), _vlabels.end(), key );
+        if( found_vlabel == _vlabels.end() || *found_vlabel != key ) {
+            vector<float> v;
+            return v;
+        }
+        return _vweights[std::distance( _vlabels.begin(), found_vlabel )];
+    }
+    */
+
 
     void WeightedObject::includeWeights( const WeightedObject &other, bool usecentralifnotfound /* old behavior: false */ )
     {
