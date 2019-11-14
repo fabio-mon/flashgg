@@ -2,7 +2,8 @@
 # Compilation     
 ```
 g++ -Wall -o "Hreweight.exe" `root-config --cflags --glibs` -L $ROOTSYS/lib -lRooFitCore -lFoam -lMinuit -lMathMore DoubleHReweighter.h SingleHReweighter.h CfgManager.cc Hreweight.cpp       
-g++ -Wall -o "MINIAODdumper.exe" `root-config --cflags --glibs` -L $ROOTSYS/lib -lRooFitCore -lFoam -lMinuit -lMathMore DoubleHReweighter.h CfgManager.cc MINIAODdumper.cpp   
+g++ -Wall -o "MINIAODdumper.exe" `root-config --cflags --glibs` -L $ROOTSYS/lib -lRooFitCore -lFoam -lMinuit -lMathMore DoubleHReweighter.h CfgManager.cc MINIAODdumper.cpp          
+g++ -Wall -o "Compute_allHHNodeMap2D.exe" `root-config --cflags --glibs` -L $ROOTSYS/lib -lRooFitCore -lFoam -lMinuit -lMathMore  CfgManager.cc Compute_allHHNodeMap2D.cpp        
 ```      
 
 # Running      

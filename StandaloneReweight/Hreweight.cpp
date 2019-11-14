@@ -85,6 +85,14 @@ int main(int argc, char** argv)
     TChain *ingenchain = ingenchain_element.second;
     cout<<"Starting to run on "<<treename<<endl;
 
+    //configure the reweighter
+    cout<<"Creating reweighter object"<<endl;
+    string process = IdentifyProcess(treename);
+    cout<<"Process is "<<process<<endl;
+    isHH = (process=="hh");
+    if(!isHH)
+      r = new SingleHReweighter::SingleHReweighter(conf,process);
+
     //branch the gen tree
     cout<<"branch ingenchain"<<endl;
     float genpTH1;
@@ -100,8 +108,9 @@ int main(int argc, char** argv)
     ingenchain->SetBranchAddress("absCosThetaStar_CS",&gencosthetaHH);
     ingenchain->SetBranchAddress("run",&genrun);
     ingenchain->SetBranchAddress("event",&genevent);
-    for(int ibench=0;ibench<12;++ibench)
-      ingenchain->SetBranchAddress(Form("benchmark_reweight_%i",ibench),&benchmark_reweight[ibench]);
+    if(isHH)
+      for(int ibench=0;ibench<12;++ibench)
+	ingenchain->SetBranchAddress(Form("benchmark_reweight_%i",ibench),&benchmark_reweight[ibench]);
 
     //branch the reco tree
     cout<<"branch inrecochain"<<endl;
@@ -146,13 +155,6 @@ int main(int argc, char** argv)
     //newtree->Branch("klarray",klarray,Form("klarray[%i]/F",Nkl*Nkt));
     //newtree->Branch("ktarray",ktarray,Form("ktarray[%i]/F",Nkl*Nkt));
 
-    //configure the reweighter
-    cout<<"Creating reweighter object"<<endl;
-    string process = IdentifyProcess(treename);
-    cout<<"Process is "<<process<<endl;
-    isHH = (process=="hh");
-    if(!isHH)
-      r = new SingleHReweighter::SingleHReweighter(conf,process);
 
     //loop over events
     cout<<"Reading tree "<<treename<<endl;
