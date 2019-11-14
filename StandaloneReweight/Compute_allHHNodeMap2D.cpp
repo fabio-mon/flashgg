@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 vector<string> * GetListOfTrees(const string &oldfilename)
 {
   TFile *oldfile = new TFile(oldfilename.c_str(),"READ");
-  oldfile->cd("tagsDumper/trees");
+  oldfile->cd("genDiphotonDumper/trees");
   TIter next(gDirectory->GetListOfKeys());
   TKey *key;
   vector<string> *treenames = new vector<string>;

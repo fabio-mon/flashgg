@@ -93,6 +93,7 @@ int main(int argc, char** argv)
     if(!isHH)
       r = new SingleHReweighter::SingleHReweighter(conf,process);
 
+    bool isNoTag = treename.find("NoTag")!=string::npos ;
     //branch the gen tree
     cout<<"branch ingenchain"<<endl;
     float genpTH1;
@@ -101,6 +102,7 @@ int main(int argc, char** argv)
     float gencosthetaHH;
     unsigned genrun;
     unsigned long genevent;
+    float MCweight;
     float benchmark_reweight[12];
     ingenchain->SetBranchAddress("ptH1",&genpTH1);    
     ingenchain->SetBranchAddress("ptH2",&genpTH2);    
@@ -108,37 +110,39 @@ int main(int argc, char** argv)
     ingenchain->SetBranchAddress("absCosThetaStar_CS",&gencosthetaHH);
     ingenchain->SetBranchAddress("run",&genrun);
     ingenchain->SetBranchAddress("event",&genevent);
+    ingenchain->SetBranchAddress("weight",&MCweight);
     if(isHH)
       for(int ibench=0;ibench<12;++ibench)
 	ingenchain->SetBranchAddress(Form("benchmark_reweight_%i",ibench),&benchmark_reweight[ibench]);
 
     //branch the reco tree
     cout<<"branch inrecochain"<<endl;
-    TChain *inrecochain = inrecochain_map[treename];
+    TChain *inrecochain=inrecochain_map[treename];
     float CMS_hgg_mass;
     float dZ;
-    float centralObjectWeight;
     float genAbsCosThetaStar_CS;
     float genMhh;
     float benchmark_reweight_SM;
     unsigned recorun;
     unsigned long recoevent;
-    if(treename.find("NoTag") == string::npos)
+    if(!isNoTag)
     {
       inrecochain->SetBranchAddress("CMS_hgg_mass",&CMS_hgg_mass);
       inrecochain->SetBranchAddress("dZ",&dZ);
+      inrecochain->SetBranchAddress("run",&recorun);
+      inrecochain->SetBranchAddress("event",&recoevent);
     }
-    inrecochain->SetBranchAddress("weight",&centralObjectWeight);
-    inrecochain->SetBranchAddress("run",&recorun);
-    inrecochain->SetBranchAddress("event",&recoevent);
 
     //add reco tree as friend to gen tree
-    assert(inrecochain->GetEntries() == ingenchain->GetEntries());//Just a precaution 
-    cout<<"Adding recochain as friend to genchain"<<endl;
-    ingenchain->AddFriend(("reco_"+treename).c_str());
+    if(!isNoTag)
+    {
+      assert(inrecochain->GetEntries() == ingenchain->GetEntries());//Just a precaution 
+      cout<<"Adding recochain as friend to genchain"<<endl;
+      ingenchain->AddFriend(("reco_"+treename).c_str());
+    }
 
     //Precaution to avoid crashes
-    if(inrecochain->GetEntries() == 0)
+    if(ingenchain->GetEntries() == 0)
     {
       cout<<"[ERROR]: tree "<<treename<<" is empty! --> switch to next tree"<<endl;
       continue;
@@ -168,8 +172,11 @@ int main(int argc, char** argv)
 	cout<<"reading entry "<<ientry<<"\r"<<std::flush;
 
       //just to be sure that events in gen and reco tree are properly aligned
-      assert(genrun==recorun);
-      assert(genevent==recoevent);
+      if(!isNoTag)
+      {
+	assert(genrun==recorun);
+	assert(genevent==recoevent);
+      }
 
       //Compute the SM reweight for this event
       float reweightSM=1;
@@ -178,8 +185,8 @@ int main(int argc, char** argv)
       else
 	reweightSM=r->getWeight(genpTH1,1,1);
 
-      SUMev_klkt[1][1] += centralObjectWeight * reweightSM;	  
-      SUMev_cat_klkt[1][1][treename] += centralObjectWeight * reweightSM;
+      SUMev_klkt[1][1] += MCweight * reweightSM;	  
+      SUMev_cat_klkt[1][1][treename] += MCweight * reweightSM;
 
       //Loop over kl and kt
       for(int ikl=0; ikl<Nkl; ++ikl)
@@ -201,8 +208,8 @@ int main(int argc, char** argv)
 	  //Fill maps 
 	  if(kl!=1 || kt!=1)//avoid double counting of SM
 	  {
-	    SUMev_klkt[kl][kt] += centralObjectWeight * reweight;
-	    SUMev_cat_klkt[kl][kt][treename] += centralObjectWeight * reweight;
+	    SUMev_klkt[kl][kt] += MCweight * reweight;
+	    SUMev_cat_klkt[kl][kt][treename] += MCweight * reweight;
 	  }
 	}
       }
@@ -283,7 +290,7 @@ int main(int argc, char** argv)
 vector<string> * GetListOfTrees(const string &oldfilename)
 {
   TFile *oldfile = new TFile(oldfilename.c_str(),"READ");
-  oldfile->cd("tagsDumper/trees");
+  oldfile->cd("genDiphotonDumper/trees");
   TIter next(gDirectory->GetListOfKeys());
   TKey *key;
   vector<string> *treenames = new vector<string>;
