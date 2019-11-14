@@ -51,6 +51,7 @@ int main(int argc, char** argv)
   //Define h reweighter objects
   DoubleHReweighter *doubler = new DoubleHReweighter(conf);
   SingleHReweighter::SingleHReweighter *r;
+  bool isHH = false;
 
   //define the objects to store the yields in the category and the normalization
   int NUMev=0;
@@ -149,7 +150,7 @@ int main(int argc, char** argv)
     cout<<"Creating reweighter object"<<endl;
     string process = IdentifyProcess(treename);
     cout<<"Process is "<<process<<endl;
-    bool isHH = (process=="hh");
+    isHH = (process=="hh");
     if(!isHH)
       r = new SingleHReweighter::SingleHReweighter(conf,process);
 
@@ -175,8 +176,8 @@ int main(int argc, char** argv)
       else
 	reweightSM=r->getWeight(genpTH1,1,1);
 
-      SUMev_klkt[1][1] += centralObjectWeight * reweightSM / 1000.;	  //NOTE: centralObjectWeight is computed assuming 1000 fb-1
-      SUMev_cat_klkt[1][1][treename] += centralObjectWeight * reweightSM / 1000.;
+      SUMev_klkt[1][1] += centralObjectWeight * reweightSM;	  
+      SUMev_cat_klkt[1][1][treename] += centralObjectWeight * reweightSM;
 
       //Loop over kl and kt
       for(int ikl=0; ikl<Nkl; ++ikl)
@@ -198,8 +199,8 @@ int main(int argc, char** argv)
 	  //Fill maps 
 	  if(kl!=1 || kt!=1)//avoid double counting of SM
 	  {
-	    SUMev_klkt[kl][kt] += centralObjectWeight * reweight / 1000.;
-	    SUMev_cat_klkt[kl][kt][treename] += centralObjectWeight * reweight / 1000.;
+	    SUMev_klkt[kl][kt] += centralObjectWeight * reweight;
+	    SUMev_cat_klkt[kl][kt][treename] += centralObjectWeight * reweight;
 	  }
 	}
       }
@@ -223,15 +224,18 @@ int main(int argc, char** argv)
   string outtxt_folder = conf.GetOpt<string> ("Output.txtfilefolder"); 
 
   cout<<"NUMev="<<NUMev<<endl;
+  cout<<"Standard Model normalization = "<<SUMev_klkt[1][1]<<endl;
+  cout<<"Standard Model normalization / 0.000079913385 = "<<SUMev_klkt[1][1]/0.000079913385<<endl;
   cout<<"-------------------------------------------------------------------------------------------------"<<endl;
+  
   for(int ikl=0; ikl<Nkl; ++ikl)
   {
     float kl = klmin + (ikl+0.5)*(klmax-klmin)/Nkl;
     for(int ikt=0; ikt<Nkt; ++ikt)
     {
       float kt = ktmin + (ikt+0.5)*(ktmax-ktmin)/Nkt;
-      cout<<"kl="<<kl<<"\tkt="<<kt<<endl;
-      cout<<"-------------------------------------------------------------------------------------------------"<<endl;
+      //cout<<"kl="<<kl<<"\tkt="<<kt<<endl;
+      //cout<<"-------------------------------------------------------------------------------------------------"<<endl;
 
       string outtxtname = Form("%s/reweighting_kl_%.3f_kt_%.3f.txt",outtxt_folder.c_str(),kl,kt);
       outtxt.open(outtxtname);
@@ -241,22 +245,27 @@ int main(int argc, char** argv)
       
       for(auto treename : *treenames)
       {
-	cout<<"SUMev_cat_klkt[1][1][treename]="<<SUMev_cat_klkt[1][1][treename]<<endl;
-	cout<<"SUMev_klkt[1][1]="<<SUMev_klkt[1][1]<<endl;
-	cout<<"SUMev_cat_klkt[kl][kt][treename]="<<SUMev_cat_klkt[kl][kt][treename]<<endl;
-	cout<<"SUMev_klkt[kl][kt]="<<SUMev_klkt[kl][kt]<<endl;
-	float reweight_cat_SM = SUMev_cat_klkt[1][1][treename] / SUMev_klkt[1][1];
-	float reweight_cat = SUMev_cat_klkt[kl][kt][treename] / SUMev_klkt[kl][kt];
+	//cout<<"SUMev_cat_klkt[1][1][treename]="<<SUMev_cat_klkt[1][1][treename]<<endl;
+	//cout<<"SUMev_klkt[1][1]="<<SUMev_klkt[1][1]<<endl;
+	//cout<<"SUMev_cat_klkt[kl][kt][treename]="<<SUMev_cat_klkt[kl][kt][treename]<<endl;
+	//cout<<"SUMev_klkt[kl][kt]="<<SUMev_klkt[kl][kt]<<endl;
+	float reweight_cat_SM = SUMev_cat_klkt[1][1][treename];
+	float reweight_cat = SUMev_cat_klkt[kl][kt][treename];
+	if(isHH)//double H reweight looses the absolute normalization, so I have to reapply it
+	{
+	  reweight_cat_SM /= SUMev_klkt[1][1];
+	  reweight_cat    /= SUMev_klkt[kl][kt];
+	}
 	if(reweight_cat==0)
 	{
 	  outtxt<<"0\t";
 	  continue;
 	}
-	cout<<"1reweight_cat="<<reweight_cat<<endl;
+	//cout<<"1reweight_cat="<<reweight_cat<<endl;
 	reweight_cat /= reweight_cat_SM;
-	cout<<"2reweight_cat="<<reweight_cat<<endl;
+	//cout<<"2reweight_cat="<<reweight_cat<<endl;
 	//if(IdentifyProcess(treename) == "hh")
-	//  reweight_cat *= 0.000079913385*doubler->getXSratio(kl,kt);
+	//  reweight_cat *= doubler->getXSratio(kl,kt);
 	//cout<<"3reweight_cat="<<reweight_cat<<endl;
         outtxt<<reweight_cat<<"\t";
       }
