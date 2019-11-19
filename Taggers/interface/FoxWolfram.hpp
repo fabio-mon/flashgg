@@ -59,10 +59,9 @@ class FoxWolfram
         
         double cosTheta(const TLorentzVector& v1, const TLorentzVector& v2)
         {
-	  //return std::cos(v1.getTheta())*std::cos(v2.getTheta())+std::sin(v1.getTheta())*std::sin(v2.getTheta())*std::cos(v1.getPhi()-v2.getPhi());
-	  double ret = (v1.X()*v2.X()+v1.Y()*v2.Y()+v1.Z()*v2.Z())/sqrt(v1.Vect().Mag2()*v2.Vect().Mag2());
-	  //cout << ret << endl;
-	  return ret;
+	  if(v1.P()!=0 && v2.P()!=0) 
+	    return (v1.Px()*v2.Px()+v1.Py()*v2.Py()+v1.Pz()*v2.Pz()) / (v1.P()*v2.P());
+	  return 0;
         }
        
         
