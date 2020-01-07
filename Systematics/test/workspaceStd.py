@@ -245,6 +245,7 @@ if customize.tthTagsOnly:
     process.flashggTagSequence.remove(process.flashggTTHDiLeptonTag)
     process.flashggTagSequence.remove(process.flashggTHQLeptonicTag)
 
+
 else:
     if not customize.doSystematics: # allow memory-intensive ttH MVAs if we are not running systematics
         allowLargettHMVAs(process)
@@ -459,7 +460,7 @@ elif customize.tthTagsOnly:
         ["TTHHadronicTag",4],
         ["TTHLeptonicTag",4]
         ]
-elif customize.doubleHTagsOnly:
+elif customize.doDoubleHTag:
     tagList = hhc.tagList
     print "taglist is:"
     print tagList
@@ -477,7 +478,7 @@ else:
         ["TTHLeptonicTag",4],
         ["THQLeptonicTag",0],
         ["TTHDiLeptonTag",0]
-        ]
+    ]
 
 definedSysts=set()
 process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")
