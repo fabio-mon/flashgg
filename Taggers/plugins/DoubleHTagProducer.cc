@@ -103,6 +103,7 @@ namespace flashgg {
         bool useElecLooseId;
         std::vector<double> elecEtaThresholds;
 
+        bool leptonVeto_;
 
         FileInPath MVAFlatteningFileName_;
         TFile * MVAFlatteningFile_;
@@ -155,6 +156,7 @@ namespace flashgg {
         mjjBoundariesUpper_ = iConfig.getParameter<vector<double > >( "MJJBoundariesUpper" ); 
         multiclassSignalIdx_ = (iConfig.getParameter<edm::ParameterSet>("MVAConfig")).getParameter<int>("multiclassSignalIdx"); 
         doReweight_ = (iConfig.getParameter<int>("doReweight")); 
+        leptonVeto_ = iConfig.getParameter<bool> ("LeptonVeto");
    
         auto names = iConfig.getParameter<vector<string>>("reweight_names");
         for (auto & name : names ) {
@@ -630,6 +632,8 @@ namespace flashgg {
                     ttHVars["etamu2"] = 0.;
                     ttHVars["phimu2"] = 0.;
                 }
+
+                if(leptonVeto_ && tagMuons.size()+tagElectrons.size()>0) continue;
 
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS_old(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);
