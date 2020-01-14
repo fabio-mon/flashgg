@@ -148,6 +148,11 @@ class DoubleHCustomize():
                "ttHScore := ttHScore()",
              ]
 
+        #####################################################################
+        #fabio temp to run the others fgg tags
+        #variables = []
+        #var_workspace = []
+
         if self.customize.dumpWorkspace == False :
             return variables
         else :
@@ -201,6 +206,7 @@ class DoubleHCustomize():
 
 
     def customizeTagSequence(self):
+        print "I am here hello!"
         self.process.load("flashgg.Taggers.flashggDoubleHTag_cff")
 
         ## customize meta conditions

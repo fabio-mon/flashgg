@@ -41,6 +41,18 @@ customize.options.register('tthTagsOnly',
                            VarParsing.VarParsing.varType.bool,
                            'tthTagsOnly'
                            )
+customize.options.register('FirsttthLepSecondHH',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'FirsttthLepSecondHH'
+                           )
+customize.options.register('HHtagaftertthhadronic',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'HHtagaftertthhadronic'
+                           )
 customize.options.register('doubleHTagsOnly',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -54,13 +66,13 @@ customize.options.register('doubleHReweight',
                            'doubleHReweight'
                            )
 customize.options.register('doDoubleHTag',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHTag'
                            )
 customize.options.register('doDoubleHttHKiller',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doDoubleHttHKiller'
@@ -78,7 +90,7 @@ customize.options.register('doDoubleHGenAnalysis',
                            'doDoubleHGenAnalysis'
                            )
 customize.options.register('doBJetRegression',
-                           False,
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doBJetRegression'
@@ -260,7 +272,6 @@ if customize.doFiducial:
     print 'we do fiducial and we change tagsorter'
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(     cms.PSet(TagName = cms.InputTag('flashggSigmaMoMpToMTag')) )
 
-
 if customize.NOtthTags:
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(   #cms.PSet(TagName = cms.InputTag('flashggTTHDiLeptonTag')), 
         #cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
@@ -305,7 +316,7 @@ useEGMTools(process)
 
 # Only run systematics for signal events
 # convention: ggh vbf wzh (wh zh) tth
-signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance"]
+signal_processes = ["ggh","vh","qqh","vbf","wzh","wh","zh","bbh","thq","thw","tth","hh","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance"]
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 #if customize.processId.count("h_") or customize.processId.count("vbf_") or customize.processId.count("Acceptance") or customize.processId.count("hh_"): 
 if is_signal:
@@ -403,7 +414,7 @@ cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels
 
 # Dump an object called NoTag for untagged events in order to track QCD weights
 # Will be broken if it's done for non-central values, so turn this on only for the non-syst tag sorter
-process.flashggTagSorter.CreateNoTag = True # MUST be after tag sequence cloning
+process.flashggTagSorter.CreateNoTag = False # MUST be after tag sequence cloning
 
 ###### Dumper section
 
@@ -465,30 +476,30 @@ if customize.doFiducial:
 elif customize.tthTagsOnly:
     tagList=[
         ["NoTag",0],
-        ["TTHHadronicTag",3],
-        ["TTHLeptonicTag",2],
+        ["TTHHadronicTag",4],
+        ["TTHLeptonicTag",4],
         ["TTHDiLeptonTag",0]
         ]
-elif customize.doubleHTagsOnly:
-    tagList = hhc.tagList
-    print "taglist is:"
-    print tagList
-elif customize.NOtthTags:
-    tagList=[
-        ["NoTag",0],
-        ["UntaggedTag",4],
-        ["VBFTag",3],
-        ["ZHLeptonicTag",0],
-        ["WHLeptonicTag",0],
-        ["VHLeptonicLooseTag",0],
-        ["VHMetTag",0],
-        ["VHHadronicTag",0],
-#        ["TTHHadronicTag",3],
-#        ["TTHLeptonicTag",2]
-#        ["TTHDiLeptonTag",0]
+elif customize.doDoubleHTag:
+    if customize.doubleHTagsOnly:
+        tagList = hhc.tagList
+    else:
+        tagList=[
+            ["DoubleHTag",12],
+            ["NoTag",0],
+            ["UntaggedTag",4],
+            ["VBFTag",3],
+            ["ZHLeptonicTag",0],
+            ["WHLeptonicTag",0],
+            ["VHLeptonicLooseTag",0],
+            ["VHMetTag",0],
+            ["VHHadronicTag",0],
+            ["TTHHadronicTag",4],
+            ["TTHLeptonicTag",4],
+            ["TTHDiLeptonTag",0]
         ]
-    print "taglist is:"
-    print tagList
+
+ 
 
 else:
     tagList=[
@@ -500,10 +511,14 @@ else:
         ["VHLeptonicLooseTag",0],
         ["VHMetTag",0],
         ["VHHadronicTag",0],
-        ["TTHHadronicTag",3],
-        ["TTHLeptonicTag",2],
+        ["TTHHadronicTag",4],
+        ["TTHLeptonicTag",4],
         ["TTHDiLeptonTag",0]
-        ]
+    ]
+
+print "taglist is:"
+print tagList
+
 
 definedSysts=set()
 process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")

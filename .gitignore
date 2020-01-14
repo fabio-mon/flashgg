@@ -26,5 +26,8 @@ AutoDict_*
 *.png
 *.pdf
 
+# neural network files which are usually too large
+*.xml
+
 # This is a symlink created by setup.sh
 DataFormats/src/classes_def.xml
