@@ -59,22 +59,29 @@ int main(int argc, char** argv)
   //Define h reweighter objects
   DoubleHReweighter *doubler;
   SingleHReweighter::SingleHReweighter *r;
+  int Nnodes=0;
   if(!isHH)
     r = new SingleHReweighter::SingleHReweighter(conf,process);
   else
+  {
     doubler = new DoubleHReweighter(conf);    
+    Nnodes=doubler->GetNnodes();
+  }
 
   //define the objects to store the yields in the category and the normalization
   int NUMev=0;
   float SUMev_fakeSM2017=0;
   map<float,map<float,float> > SUMev_klkt; // SUMev_klkt [kl] [kt]
   map<float , map<float,map<string,float> > > SUMev_cat_klkt; //SUMev_cat_klkt [kl] [kt] [treename]
+  map<int,float> SUMev_node; // SUMev_node [node]
+  map<int, map<string,float> > SUMev_cat_node; //SUMev_cat_node [node] [treename]
 
   //Initialize map content just as precaution
   //force the presence of SM case
   SUMev_klkt[1][1]=0;
   for(auto treename : *treenames)
     SUMev_cat_klkt[1][1][treename]=0;
+
   for(int ikl=0; ikl<Nkl; ++ikl)
   {
     float kl = klmin + (ikl+0.5)*(klmax-klmin)/Nkl;
@@ -86,11 +93,13 @@ int main(int argc, char** argv)
 	SUMev_cat_klkt[kl][kt][treename]=0;
     }
   }
+  for(int inode=0; inode<Nnodes; ++inode)
+  {
+    SUMev_node[inode]=0;
+    for(auto treename : *treenames)
+      SUMev_cat_node[inode][treename]=0;
+  }
     
-  //open the files
-  //TFile *newfile = new TFile(newfilename.c_str(),"RECREATE");
-  //TDirectory* newdir = newfile->mkdir("tagsDumper");
-  //newdir = newdir->mkdir("trees");
   for(auto &ingenchain_element : ingenchain_map)
   {
     string treename = ingenchain_element.first;
@@ -114,96 +123,29 @@ int main(int argc, char** argv)
     ingenchain->SetBranchAddress("run",&genrun);
     ingenchain->SetBranchAddress("event",&genevent);
     ingenchain->SetBranchAddress("weight",&MCweight);
-
-    //branch the reco tree
-    cout<<"branch inrecochain"<<endl;
-    TChain *inrecochain=inrecochain_map[treename];
-    //float CMS_hgg_mass;
-    //float dZ;
-    //float genAbsCosThetaStar_CS;
-    //float genMhh;
-    unsigned recorun;
-    unsigned long recoevent;
-    //float centralObjectWeight;
-    if(!isNoTag)
+    /*
+    float benchmark_reweight[15];
+    if(isHH)
     {
-      //inrecochain->SetBranchAddress("centralObjectWeight",&centralObjectWeight);
-      //inrecochain->SetBranchAddress("CMS_hgg_mass",&CMS_hgg_mass);
-      //inrecochain->SetBranchAddress("dZ",&dZ);
-      inrecochain->SetBranchAddress("run",&recorun);
-      inrecochain->SetBranchAddress("event",&recoevent);
+      for(int ibench=0;ibench<12;++ibench)
+	ingenchain->SetBranchAddress(Form("benchmark_reweight_%i",ibench),&benchmark_reweight[ibench]);
+      ingenchain->SetBranchAddress("benchmark_reweight_SM",&benchmark_reweight[12]);
+      ingenchain->SetBranchAddress("benchmark_reweight_box",&benchmark_reweight[13]);
+      ingenchain->SetBranchAddress("benchmark_reweight_2017fake",&benchmark_reweight[14]);
     }
-
-    //add reco tree as friend to gen tree
-    if(!isNoTag)
-    {
-      assert(inrecochain->GetEntries() == ingenchain->GetEntries());//Just a precaution 
-      cout<<"Adding recochain as friend to genchain"<<endl;
-      ingenchain->AddFriend(("reco_"+treename).c_str());
-    }
-
-    //Precaution to avoid crashes
-    //if(ingenchain->GetEntries() == 0)
-    //{
-    //  cout<<"[ERROR]: tree "<<treename<<" is empty! --> switch to next tree"<<endl;
-    //  continue;
-    //}
-
-    //create and branch the new tree
-    //cout<<"Creating output tree"<<endl;
-    //float benchmark_reweight_SM;
-    //float benchmark_reweight_box;
-    //float benchmark_reweight_2017fake;
-    //float benchmark_reweight[12];
-    //newdir->cd();
-    //TTree *newtree = new TTree(treename.c_str(),treename.c_str());
-    //newtree->Branch("ptH1",&genpTH1,"ptH1/F");    
-    //newtree->Branch("ptH2",&genpTH2,"ptH2/F");    
-    //newtree->Branch("mhh",&genmHH,"mhh/F");
-    //newtree->Branch("absCosThetaStar_CS",&gencosthetaHH,"absCosThetaStar_CS/F");
-    //newtree->Branch("run",&genrun,"run/i");
-    //newtree->Branch("event",&genevent,"event/l");
-    //newtree->Branch("weight",&MCweight,"weight/F");
-    //newtree->Branch("CMS_hgg_mass",&CMS_hgg_mass,"CMS_hgg_mass/F");
-    //newtree->Branch("centralObjectWeight",&centralObjectWeight,"centralObjectWeight/F");
-    //newtree->Branch("dZ",&dZ,"dZ/F");
-    //if(isHH)
-    //{
-    //  newtree->Branch("benchmark_reweight_SM",&benchmark_reweight_SM,"benchmark_reweight_SM/F");
-    //  newtree->Branch("benchmark_reweight_box",&benchmark_reweight_box,"benchmark_reweight_box/F");
-    //  newtree->Branch("benchmark_reweight_2017fake",&benchmark_reweight_2017fake,"benchmark_reweight_2017fake/F");
-    //  for(int ibench=0;ibench<12;++ibench)
-    //  newtree->Branch(Form("benchmark_reweight_%i",ibench),&benchmark_reweight[ibench],"benchmark_reweight_%i/F");
-    //}
-
-
-    //float* klktreweight = new float[Nkl*Nkt];
-    //float* klarray = new float[Nkl*Nkt];
-    //float* ktarray = new float[Nkl*Nkt];
-    //newtree->Branch("klktreweight",klktreweight,Form("klktreweight[%i]/F",Nkl*Nkt));
-    //newtree->Branch("klarray",klarray,Form("klarray[%i]/F",Nkl*Nkt));
-    //newtree->Branch("ktarray",ktarray,Form("ktarray[%i]/F",Nkl*Nkt));
-
+    */
 
     //loop over events
     cout<<"Reading tree "<<treename<<endl;
     Long64_t nentries = ingenchain->GetEntries();
     cout<<nentries<<" entries"<<endl;
     for(long ientry=0;ientry<nentries; ++ientry)
-      //for(long ientry=0;ientry<nentries; ientry+=5000)
+    //for(long ientry=0;ientry<nentries; ientry+=300)
     {
       ingenchain->GetEntry(ientry);
       ++NUMev;
       if(ientry%5000==0)
 	cout<<"reading entry "<<ientry<<"\r"<<std::flush;
-
-      //just to be sure that events in gen and reco tree are properly aligned
-      if(!isNoTag)
-      {
-	assert(genrun==recorun);
-	assert(genevent==recoevent);
-      }
-
 
       //Compute the SM reweight for this event
       float reweightSM=1;
@@ -215,16 +157,24 @@ int main(int argc, char** argv)
       SUMev_klkt[1][1] += MCweight * reweightSM;	  
       SUMev_cat_klkt[1][1][treename] += MCweight * reweightSM;
 
+      if(SUMev_klkt[1][1] < 0)
+      {
+	cout<<"SUMev_klkt[1][1] < 0"<<endl;
+	cout<<"MCweight="<<MCweight<<endl;
+	cout<<"reweightSM="<<reweightSM<<endl;
+	getchar();
+      }
+
+      
       //Recompute the benchmark reweights
-      //if(isHH)
-      //{
-      //SUMev_fakeSM2017 += MCweight * doubler->getWeight(14,genmHH, gencosthetaHH);
-      //benchmark_reweight_SM       = doubler->getWeight(12,genmHH, gencosthetaHH);
-      //benchmark_reweight_box      = doubler->getWeight(13,genmHH, gencosthetaHH);
-      //benchmark_reweight_2017fake = doubler->getWeight(14,genmHH, gencosthetaHH);
-      //for(int ibench=0;ibench<12;++ibench)
-      //  benchmark_reweight[ibench] = doubler->getWeight(ibench,genmHH, gencosthetaHH);
-      //}
+      if(isHH)
+	for(int inode=0; inode<Nnodes; ++inode)
+        {
+	  double benchmarkreweight = doubler->getWeight(inode,genmHH, gencosthetaHH);
+	  SUMev_node[inode] += MCweight * benchmarkreweight;
+	  SUMev_cat_node[inode][treename] += MCweight * benchmarkreweight;
+	}
+      
 
       //Loop over kl and kt
       for(int ikl=0; ikl<Nkl; ++ikl)
@@ -249,6 +199,15 @@ int main(int argc, char** argv)
 	    SUMev_klkt[kl][kt] += MCweight * reweight;
 	    SUMev_cat_klkt[kl][kt][treename] += MCweight * reweight;
 	  }
+
+	  if(SUMev_klkt[kl][kt] < 0)
+	  {
+	    cout<<"SUMev_klkt["<<kl<<"]["<<kt<<"] < 0"<<endl;
+	    cout<<"MCweight="<<MCweight<<endl;
+	    cout<<"reweight="<<reweight<<endl;
+	    getchar();
+	  }
+
 	}
       }
       //newtree->Fill();
@@ -288,12 +247,15 @@ int main(int argc, char** argv)
       //cout<<"kl="<<kl<<"\tkt="<<kt<<endl;
       //cout<<"-------------------------------------------------------------------------------------------------"<<endl;
 
+      //open the txt
       string outtxtname;
       if(isHH)
 	outtxtname = Form("%s/reweighting_hh_node_SM_%i_kl_%.3f_kt_%.3f.txt",outtxt_folder.c_str(),GetYear(treenames->at(0)),kl,kt);
       else
 	outtxtname = Form("%s/reweighting_%s_%i_kl_%.3f_kt_%.3f.txt",outtxt_folder.c_str(),process.c_str(),GetYear(treenames->at(0)),kl,kt);
       outtxt.open(outtxtname);
+
+      //write the first line which is the list of the tags
       for(unsigned itreename=0; itreename!=treenames->size(); ++itreename)
       {
 	if(treenames->at(itreename).find("NoTag") != string::npos)
@@ -305,22 +267,30 @@ int main(int argc, char** argv)
       }
       outtxt<<endl;
       
+      //write the second line which is the change of the yield in each category
       for(auto treename : *treenames)
       {
 	if(treename.find("NoTag") != string::npos)
 	  continue;
-	//cout<<"SUMev_cat_klkt[1][1][treename]="<<SUMev_cat_klkt[1][1][treename]<<endl;
-	//cout<<"SUMev_klkt[1][1]="<<SUMev_klkt[1][1]<<endl;
-	//cout<<"SUMev_cat_klkt[kl][kt][treename]="<<SUMev_cat_klkt[kl][kt][treename]<<endl;
-	//cout<<"SUMev_klkt[kl][kt]="<<SUMev_klkt[kl][kt]<<endl;
+	cout<<"SUMev_cat_klkt[1][1][treename]="<<SUMev_cat_klkt[1][1][treename]<<endl;
+	cout<<"SUMev_klkt[1][1]="<<SUMev_klkt[1][1]<<endl;
+	cout<<"SUMev_cat_klkt[kl][kt][treename]="<<SUMev_cat_klkt[kl][kt][treename]<<endl;
+	cout<<"SUMev_klkt[kl][kt]="<<SUMev_klkt[kl][kt]<<endl;
 	float reweight_cat_SM = SUMev_cat_klkt[1][1][treename];
 	float reweight_cat = SUMev_cat_klkt[kl][kt][treename];
+
+	if(SUMev_klkt[kl][kt]==0)//it happens to hh when kt=0
+	{
+	  outtxt<<"0\t";
+	  continue;
+	}
 	if(isHH)//double H reweight looses the absolute normalization, so I have to reapply it
 	{
 	  reweight_cat_SM /= SUMev_klkt[1][1];
 	  reweight_cat    /= SUMev_klkt[kl][kt];
 	}
-	if(reweight_cat==0)
+
+	if(reweight_cat==0)//I don't have events of this process in this category (signalfit already knows so i simply not reweight)
 	{
 	  outtxt<<"1\t";
 	  continue;
@@ -337,7 +307,60 @@ int main(int argc, char** argv)
       outtxt.close();
     }
   }
+  
+  //create the txt files also for the nodes
+  if(isHH)
+  {
+    for(int inode=0; inode<Nnodes; ++inode)
+    {
+      cout<<"node "<<inode<<endl;
+      string outtxtname = Form("%s/reweighting_hh_benchmark_%i_%i.txt",outtxt_folder.c_str(),inode,GetYear(treenames->at(0)));
+      outtxt.open(outtxtname);
 
+      //write the first line which is the list of the tags
+      for(unsigned itreename=0; itreename!=treenames->size(); ++itreename)
+      {
+	if(treenames->at(itreename).find("NoTag") != string::npos)
+	  continue;
+	string catname = GetCatName(treenames->at(itreename));
+	if(itreename != 0)
+	  outtxt<<"\t";
+	outtxt<<catname;
+      }
+      outtxt<<endl;
+
+      for(auto treename : *treenames)
+      {
+	cout<<"\t"<<treename<<endl;
+	if(treename.find("NoTag") != string::npos)
+	  continue;
+	cout<<"SUMev_cat_klkt[1][1][treename]"<<SUMev_cat_klkt[1][1][treename]<<endl;
+	cout<<"SUMev_cat_node[inode][treename]"<<SUMev_cat_node[inode][treename]<<endl;
+	cout<<"SUMev_klkt[1][1]"<<SUMev_klkt[1][1]<<endl;
+	cout<<"SUMev_node[inode]"<<SUMev_node[inode]<<endl;
+	float reweight_cat_SM = SUMev_cat_klkt[1][1][treename];
+	float reweight_cat = SUMev_cat_node[inode][treename];
+	cout<<"1reweight_cat_SM"<<reweight_cat_SM<<endl;
+	cout<<"1reweight_cat"<<reweight_cat<<endl;
+	reweight_cat_SM /= SUMev_klkt[1][1];
+	reweight_cat    /= SUMev_node[inode];
+	cout<<"2reweight_cat_SM"<<reweight_cat_SM<<endl;
+	cout<<"2reweight_cat"<<reweight_cat<<endl;
+	if(reweight_cat==0)//I don't have events of this process in this category (signalfit already knows so i simply not reweight)
+	{
+	  outtxt<<"1\t";
+	  continue;
+	}
+
+	reweight_cat /= reweight_cat_SM;
+	cout<<"3reweight_cat"<<reweight_cat<<endl;
+        outtxt<<reweight_cat<<"\t";
+      }
+      outtxt<<endl;
+      outtxt.close();
+    }
+  }
+  
   if(!isHH)
     delete r;
   else

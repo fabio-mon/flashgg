@@ -20,13 +20,14 @@ class DoubleHReweighter
   public:
     DoubleHReweighter( CfgManager conf );
     ~DoubleHReweighter();
+    int GetNnodes() {return NUM_benchmarks;}
     float getWeight( int targetNode, float gen_mHH, float gen_cosTheta);
     float getWeight(float kl, float kt, float gen_mHH, float gen_cosTheta);
     float getCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
     float getXSratio(float kl, float kt);
     float getXSratio(float kl, float kt, float c2, float cg, float c2g);
   private:
-    float functionGF(float kl, float kt, float c2, float cg, float c2g, vector<float> A);
+    float functionGF(float kl, float kt, float c2, float cg, float c2g, const vector<float> &A);
     pair<int,int> find2DBin(TH2* h, float x, float y);
 
     string weightsFile_;  // file with prepared histograms needed for reweighting
@@ -97,7 +98,7 @@ float DoubleHReweighter::getXSratio(float kl, float kt, float c2, float cg, floa
   return functionGF(kl,kt,c2,cg,c2g,A_13TeV_SM_);
 }
 
-float DoubleHReweighter::functionGF(float kl, float kt, float c2, float cg, float c2g, vector<float> A)
+float DoubleHReweighter::functionGF(float kl, float kt, float c2, float cg, float c2g, const vector<float> &A)
 {
     return ( A[0]*pow(kt,4) + A[1]*pow(c2,2) + (A[2]*pow(kt,2) + A[3]*pow(cg,2))*pow(kl,2) + A[4]*pow(c2g,2) + ( A[5]*c2 + A[6]*kt*kl )*pow(kt,2) + (A[7]*kt*kl + A[8]*cg*kl )*c2 + A[9]*c2*c2g + (A[10]*cg*kl + A[11]*c2g)*pow(kt,2)+ (A[12]*kl*cg + A[13]*c2g )*kt*kl + A[14]*cg*c2g*kl );
 }
@@ -143,8 +144,14 @@ float DoubleHReweighter::getWeight(float kl, float kt, float gen_mHH, float gen_
     for (unsigned int ic = 0; ic < NCOEFFSA_; ++ic)
         Acoeffs.push_back((hists_params_[ic])->GetBinContent(bins.first, bins.second));
 
-    float effBSM = nEvSM * functionGF(kl,kt,0,0,0,Acoeffs)/functionGF(kl,kt,0,0,0,A_13TeV_SM_);
+    float SMfunctionGF = functionGF(kl,kt,0,0,0,A_13TeV_SM_);
+    if(SMfunctionGF==0)
+      return 0;
+    float effBSM = nEvSM * functionGF(kl,kt,0,0,0,Acoeffs)/SMfunctionGF;
+
     w = (effBSM/denom) ;
+    if(w<0)
+      return 0;
 
     return w;
 
