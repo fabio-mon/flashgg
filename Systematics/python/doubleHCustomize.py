@@ -16,17 +16,17 @@ class DoubleHCustomize():
         else:
             self.tagList = [ 
                 ["NoTag",0],
-                ["UntaggedTag",4],
-                ["VBFTag",3],
-                ["ZHLeptonicTag",0],
-                ["WHLeptonicTag",0],
-                ["VHLeptonicLooseTag",0],
-                ["VHMetTag",0],
-                ["VHHadronicTag",0],
+#                ["UntaggedTag",4],
+#                ["VBFTag",3],
+#                ["ZHLeptonicTag",0],
+#                ["WHLeptonicTag",0],
+#                ["VHLeptonicLooseTag",0],
+#                ["VHMetTag",0],
+#                ["VHHadronicTag",0],
                 ["TTHHadronicTag",4],
                 ["TTHLeptonicTag",4],
-                ["THQLeptonicTag",0],
-                ["TTHDiLeptonTag",0],
+#                ["THQLeptonicTag",0],
+#                ["TTHDiLeptonTag",0],
                 ["DoubleHTag",12]
             ]
         self.customizeTagSequence()
@@ -263,6 +263,20 @@ class DoubleHCustomize():
 
         ## add double Higgs tag to the tag sequence
         self.process.flashggTagSequence.replace(self.process.flashggUntagged,(self.process.flashggDoubleHTag+self.process.flashggUntagged))
+        self.process.flashggTagSequence.remove(self.process.flashggVBFTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHEtTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHLooseTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHTightTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHMetTag)
+        self.process.flashggTagSequence.remove(self.process.flashggWHLeptonicTag)
+        self.process.flashggTagSequence.remove(self.process.flashggZHLeptonicTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHLeptonicLooseTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVHHadronicTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVBFMVA)
+        self.process.flashggTagSequence.remove(self.process.flashggVBFDiPhoDiJetMVA)
+        self.process.flashggTagSequence.remove(self.process.flashggTTHDiLeptonTag)
+        self.process.flashggTagSequence.remove(self.process.flashggUntagged)
+        self.process.flashggTagSequence.remove(self.process.flashggTHQLeptonicTag)
 
         ## remove single Higgs tags
         if self.customize.doubleHTagsOnly:

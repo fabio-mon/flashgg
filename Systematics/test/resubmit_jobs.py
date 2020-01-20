@@ -83,7 +83,7 @@ def main():
                   help="directory")
   parser.add_option("-i", "--input", dest="input",default="all_root.txt",
                   help="input file with all root files present")
-  parser.add_option("-r", "--resubmit", action="store_false",  dest="resubmit",default=True,
+  parser.add_option("-r", "--resubmit", action="store_false",  dest="resubmit",default=False,
                   help="resubmit")
 
   (options, args) = parser.parse_args()
