@@ -6,7 +6,7 @@ flashggTagSorter = cms.EDProducer('FlashggTagSorter',
                                   # Top of list is highest priority
                                   # Optionally can add category ranges if priority depends on category number
                                   TagPriorityRanges = cms.VPSet(
-#        cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')), 
+        cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')), 
 #        cms.PSet(TagName = cms.InputTag('flashggTTHDiLeptonTag')), 
         cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
 #	cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag')),
@@ -27,7 +27,7 @@ flashggTagSorter = cms.EDProducer('FlashggTagSorter',
                                   MassCutUpper=cms.double(180.),
                                   MassCutLower=cms.double(100),
                                   MinObjectWeightException = cms.double(0.0),
-                                  MaxObjectWeightException = cms.double(10.),
+                                  MaxObjectWeightException = cms.double(15.),
                                   MinObjectWeightWarning = cms.double(0.4),
                                   MaxObjectWeightWarning = cms.double(2.5),
                                   StoreOtherTagInfo = cms.bool(False),

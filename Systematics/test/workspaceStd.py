@@ -610,6 +610,11 @@ if customize.tthTagsOnly:
                          process.penultimateFilter*
                          process.finalFilter*
                          process.tagsDumper)
+    for opt, value in customize.metaConditions["flashggDiPhotons"].items():
+        if isinstance(value, unicode):
+            setattr(process.flashggDiPhotons, opt, str(value))
+        else:
+            setattr(process.flashggDiPhotons, opt, value)
     # Now, we put the ttH tags back in the sequence with modified systematics workflow
     modifySystematicsWorkflowForttH(process, systlabels, phosystlabels, metsystlabels, jetsystlabels)
 
