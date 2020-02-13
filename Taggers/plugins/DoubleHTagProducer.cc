@@ -181,6 +181,16 @@ namespace flashgg {
             reweights_.push_back(consumes<float>(edm::InputTag(iConfig.getParameter<string>("reweight_producer") , name))) ;
         }
 
+        TTHLeptonictag_MuonPtCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonPtCut");
+        TTHLeptonictag_MuonEtaCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonEtaCut");
+        TTHLeptonictag_MuonIsoCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonIsoCut");
+        TTHLeptonictag_MuonPhotonDrCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonPhotonDrCut");
+        TTHLeptonictag_ElePtCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePtCut");
+        TTHLeptonictag_EleEtaCuts_=iConfig.getParameter<vector<double> > ("TTHLeptonictag_EleEtaCuts");
+        TTHLeptonictag_ElePhotonDrCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePhotonDrCut");
+        TTHLeptonictag_ElePhotonZMassCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePhotonZMassCut");
+        TTHLeptonictag_DeltaRTrkEle_=iConfig.getParameter<double> ("TTHLeptonictag_DeltaRTrkEle");
+
       //  diPhotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( iConfig.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
         inputDiPhotonName_= iConfig.getParameter<std::string > ( "DiPhotonName" );
         inputDiPhotonSuffixes_= iConfig.getParameter<std::vector<std::string> > ( "DiPhotonSuffixes" );
@@ -435,6 +445,26 @@ namespace flashgg {
                 continue;
             }
 
+            //lepton veto
+            Handle<View<reco::Vertex> > vertices;
+            evt.getByToken( vertexToken_, vertices );
+
+            std::vector<edm::Ptr<flashgg::Muon> >     Muons2018;
+            Handle<View<flashgg::Muon> > theMuons;
+            evt.getByToken( muonToken_, theMuons );
+
+            std::vector<edm::Ptr<flashgg::Electron> > Electrons2018;
+            Handle<View<flashgg::Electron> > theElectrons;
+            evt.getByToken( electronToken_, theElectrons );
+            
+
+            if(theMuons->size()>0) {
+                Muons2018 = LeptonSelection2018::selectMuons(theMuons->ptrs(), dipho, vertices->ptrs(), TTHLeptonictag_MuonPtCut_, TTHLeptonictag_MuonEtaCut_, TTHLeptonictag_MuonIsoCut_, TTHLeptonictag_MuonPhotonDrCut_, 0);
+            }
+            if(theElectrons->size()>0) {
+               Electrons2018 = LeptonSelection2018::selectElectrons(theElectrons->ptrs(), dipho, TTHLeptonictag_ElePtCut_, TTHLeptonictag_EleEtaCuts_, TTHLeptonictag_ElePhotonDrCut_, TTHLeptonictag_ElePhotonZMassCut_, TTHLeptonictag_DeltaRTrkEle_, 0);
+            }
+
 
             //lepton veto
             Handle<View<reco::Vertex> > vertices;
@@ -547,7 +577,8 @@ namespace flashgg {
             tag_obj.setEventNumber(evt.id().event() );
             tag_obj.setMVA( mva );
            
-
+            tag_obj.nMuons2018_ = Muons2018.size();
+            tag_obj.nElectrons2018_ = Electrons2018.size();
 
  
             // tag_obj.setMVAprob( mva_vector );
@@ -803,7 +834,10 @@ namespace flashgg {
 
                 float ttHScore = EvaluateNN();
                 if (ttHScore < ttHScoreThreshold) continue;
-                
+               
+                tag_obj.ntagMuons_ = tagMuons.size();
+                tag_obj.ntagElectrons_ = tagElectrons.size();
+
                 tag_obj.ttHScore_ = ttHScore;
                 PL_VectorVar_.clear();
                 HLF_VectorVar_.clear();
@@ -813,11 +847,11 @@ namespace flashgg {
             int catnum = chooseCategory( tag_obj.MVA(), tag_obj.MX() );
             tag_obj.setCategoryNumber( catnum );
             tag_obj.includeWeights( *dipho );
-            //            tag_obj.includeWeights( *leadJet );
-            //            tag_obj.includeWeights( *subleadJet );
-
-                        tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
-                        tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
+            //tag_obj.includeWeights( *leadJet );
+            //tag_obj.includeWeights( *subleadJet );
+            
+            tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight",false);
+            tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight",false );
 
 
 

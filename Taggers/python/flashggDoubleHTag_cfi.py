@@ -9,6 +9,7 @@ from flashgg.Taggers.globalVariables_cff import globalVariables
 import flashgg.Taggers.flashggDoubleHReweight_cfi as reweight_settings
 from flashgg.Taggers.flashggDoubleHReweight_cfi import flashggDoubleHReweight
 from flashgg.MicroAOD.flashggJets_cfi import  maxJetCollections
+from flashgg.Taggers.flashggTags_cff import flashggTTHLeptonicTag
 
 jetID = ''
 weightsFile=""# path to TMVA weights
@@ -75,6 +76,16 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doReweight = flashggDoubleHReweight.doReweight,
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
+                                   #lepton info
+                                   TTHLeptonictag_MuonEtaCut = flashggTTHLeptonicTag.MuonEtaCut,
+                                   TTHLeptonictag_MuonPtCut = flashggTTHLeptonicTag.MuonPtCut,
+                                   TTHLeptonictag_MuonIsoCut = flashggTTHLeptonicTag.MuonIsoCut,
+                                   TTHLeptonictag_MuonPhotonDrCut = flashggTTHLeptonicTag.MuonPhotonDrCut,
+                                   TTHLeptonictag_EleEtaCuts = flashggTTHLeptonicTag.EleEtaCuts,
+                                   TTHLeptonictag_ElePtCut = flashggTTHLeptonicTag.ElePtCut ,
+                                   TTHLeptonictag_ElePhotonDrCut = flashggTTHLeptonicTag.ElePhotonDrCut,
+                                   TTHLeptonictag_ElePhotonZMassCut = flashggTTHLeptonicTag.ElePhotonZMassCut,
+                                   TTHLeptonictag_DeltaRTrkEle =flashggTTHLeptonicTag.DeltaRTrkEle ,
 
                                    dottHTagger=cms.bool(False), #whether to do ttH killer. 
 
@@ -116,6 +127,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
 
 cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                       # here the syntax is VarNameInTMVA := expression
+                      #### With or without Mjj is customized inside python doubleHCustomize and using options UseMjj
                       [
                        "Mjj := dijet().M()",
                        "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
@@ -138,8 +150,8 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                        "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
                        "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
                        "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",
-                       "photJetdRmin := getPhoJetMinDr()", 
-                       "photJetdRmin2 := getPhoJetOtherDr()" 
+                       "PhoJetMinDr := getPhoJetMinDr()",
+                       "PhoJetOtherDr := getPhoJetOtherDr()" 
                        ]
                       )
 
