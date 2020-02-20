@@ -35,6 +35,12 @@ customize.options.register('tthTagsOnly',
                            VarParsing.VarParsing.varType.bool,
                            'tthTagsOnly'
                            )
+customize.options.register('HHTTHcustomize',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'HHTTHcustomize'
+                           )
 customize.options.register('doubleHTagsOnly',
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -162,6 +168,10 @@ customize.options.register('analysisType',
                            'analysisType'
                            )
 
+if(customize.HHTTHcustomize):
+    customize.doDoubleHTag=False
+    customize.doubleHTagsOnly=False
+    customize.tthTagsOnly=False
 
 print "Printing defaults"
 print 'doFiducial '+str(customize.doFiducial)
@@ -268,6 +278,12 @@ else:
     if not customize.doSystematics: # allow memory-intensive ttH MVAs if we are not running systematics
         allowLargettHMVAs(process)
 
+if customize.HHTTHcustomize:
+    import flashgg.Systematics.HHTTHcustomize
+    HHTTHcustomizer = flashgg.Systematics.HHTTHcustomize.HHTTHcustomizer(process, customize, customize.metaConditions)
+    minimalVariables += HHTTHcustomizer.variablesToDump()
+    systematicVariables = HHTTHcustomizer.systematicVariables()
+    
 if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize 
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
@@ -394,7 +410,15 @@ if customize.doubleHTagsOnly:
 
 if customize.doDoubleHTag:
    systlabels,jetsystlabels,metsystlabels = hhc.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
-           
+         
+
+if customize.HHTTHcustomize:
+    variablesToUse = minimalVariables
+    if customize.processId == "Data":
+        variablesToUse = minimalNonSignalVariables
+        #variablesToUse += HHTTHcustomizer.variablesToDumpData()
+    systlabels,jetsystlabels,metsystlabels = HHTTHcustomizer.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
+  
 
 print "--- Systematics  with independent collections ---"
 print systlabels
@@ -481,6 +505,10 @@ elif customize.tthTagsOnly:
         ]
 elif customize.doDoubleHTag:
     tagList = hhc.tagList
+    print "taglist is:"
+    print tagList
+elif customize.HHTTHcustomize:
+    tagList = HHTTHcustomizer.tagList
     print "taglist is:"
     print tagList
 else:
@@ -682,7 +710,9 @@ if customize.doBJetRegression:
 
 if customize.doDoubleHTag:
     hhc.doubleHTagRunSequence(systlabels,jetsystlabels,phosystlabels)
-  
+
+if customize.HHTTHcustomize:
+    HHTTHcustomizer.customizeRunSequence(systlabels,jetsystlabels,phosystlabels,metsystlabels)  
 
 if customize.doFiducial:
     if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) 

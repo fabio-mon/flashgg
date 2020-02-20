@@ -103,7 +103,7 @@ namespace flashgg {
         bool useElecLooseId;
         std::vector<double> elecEtaThresholds;
 
-        bool leptonVeto_;
+        bool   leptonVeto_;
         double TTHLeptonictag_MuonPtCut_;
         double TTHLeptonictag_MuonEtaCut_;
         double TTHLeptonictag_MuonIsoCut_;
@@ -113,6 +113,7 @@ namespace flashgg {
         double TTHLeptonictag_ElePhotonDrCut_;
         double TTHLeptonictag_ElePhotonZMassCut_;
         double TTHLeptonictag_DeltaRTrkEle_;
+
 
         FileInPath MVAFlatteningFileName_;
         TFile * MVAFlatteningFile_;
@@ -165,22 +166,12 @@ namespace flashgg {
         mjjBoundariesUpper_ = iConfig.getParameter<vector<double > >( "MJJBoundariesUpper" ); 
         multiclassSignalIdx_ = (iConfig.getParameter<edm::ParameterSet>("MVAConfig")).getParameter<int>("multiclassSignalIdx"); 
         doReweight_ = (iConfig.getParameter<int>("doReweight")); 
-        leptonVeto_ = iConfig.getParameter<bool> ("LeptonVeto");
-        TTHLeptonictag_MuonPtCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonPtCut");
-        TTHLeptonictag_MuonEtaCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonEtaCut");
-        TTHLeptonictag_MuonIsoCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonIsoCut");
-        TTHLeptonictag_MuonPhotonDrCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonPhotonDrCut");
-        TTHLeptonictag_ElePtCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePtCut");
-        TTHLeptonictag_EleEtaCuts_=iConfig.getParameter<vector<double> > ("TTHLeptonictag_EleEtaCuts");
-        TTHLeptonictag_ElePhotonDrCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePhotonDrCut");
-        TTHLeptonictag_ElePhotonZMassCut_=iConfig.getParameter<double> ("TTHLeptonictag_ElePhotonZMassCut");
-        TTHLeptonictag_DeltaRTrkEle_=iConfig.getParameter<double> ("TTHLeptonictag_DeltaRTrkEle");
-
         auto names = iConfig.getParameter<vector<string>>("reweight_names");
         for (auto & name : names ) {
             reweights_.push_back(consumes<float>(edm::InputTag(iConfig.getParameter<string>("reweight_producer") , name))) ;
         }
 
+        leptonVeto_ = iConfig.getParameter<bool> ("LeptonVeto");
         TTHLeptonictag_MuonPtCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonPtCut");
         TTHLeptonictag_MuonEtaCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonEtaCut");
         TTHLeptonictag_MuonIsoCut_=iConfig.getParameter<double> ("TTHLeptonictag_MuonIsoCut");
@@ -253,6 +244,12 @@ namespace flashgg {
             }
         }
 
+        //needed for ttH killer
+        METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
+        electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
+        muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
+        vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
+        rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
 
 
         if(dottHTagger_)
@@ -271,12 +268,6 @@ namespace flashgg {
             useElecLooseId = iConfig.getParameter<bool>("useElectronLooseID");
             elecEtaThresholds = iConfig.getParameter<std::vector<double > >("electronEtaThresholds");
             
-            //needed for ttH killer
-            METToken_= consumes<View<flashgg::Met> >( iConfig.getParameter<InputTag> ("METTag") ) ;
-            electronToken_ = consumes<edm::View<flashgg::Electron> >( iConfig.getParameter<edm::InputTag> ("ElectronTag") );
-            muonToken_ = consumes<edm::View<flashgg::Muon> >( iConfig.getParameter<edm::InputTag>("MuonTag") );
-            vertexToken_ = consumes<edm::View<reco::Vertex> >( iConfig.getParameter<edm::InputTag> ("VertexTag") );
-            rhoToken_ = consumes<double>( iConfig.getParameter<edm::InputTag>( "rhoTag" ) );
             
             ttHWeightfileName_ = iConfig.getUntrackedParameter<FileInPath>("ttHWeightfile");
             ttHScoreThreshold = iConfig.getParameter<double>("ttHScoreThreshold");
@@ -464,32 +455,8 @@ namespace flashgg {
             if(theElectrons->size()>0) {
                Electrons2018 = LeptonSelection2018::selectElectrons(theElectrons->ptrs(), dipho, TTHLeptonictag_ElePtCut_, TTHLeptonictag_EleEtaCuts_, TTHLeptonictag_ElePhotonDrCut_, TTHLeptonictag_ElePhotonZMassCut_, TTHLeptonictag_DeltaRTrkEle_, 0);
             }
-
-
-            //lepton veto
-            Handle<View<reco::Vertex> > vertices;
-            evt.getByToken( vertexToken_, vertices );
-
-            std::vector<edm::Ptr<flashgg::Muon> >     Muons;
-            Handle<View<flashgg::Muon> > theMuons;
-            evt.getByToken( muonToken_, theMuons );
-
-            std::vector<edm::Ptr<flashgg::Electron> > Electrons;
-            Handle<View<flashgg::Electron> > theElectrons;
-            evt.getByToken( electronToken_, theElectrons );
-            
-            if(leptonVeto_) {
-
-                if(theMuons->size()>0) {
-                    Muons = LeptonSelection2018::selectMuons(theMuons->ptrs(), dipho, vertices->ptrs(), TTHLeptonictag_MuonPtCut_, TTHLeptonictag_MuonEtaCut_, TTHLeptonictag_MuonIsoCut_, TTHLeptonictag_MuonPhotonDrCut_, 0);
-                }
-                if(theElectrons->size()>0) {
-                    Electrons = LeptonSelection2018::selectElectrons(theElectrons->ptrs(), dipho, TTHLeptonictag_ElePtCut_, TTHLeptonictag_EleEtaCuts_, TTHLeptonictag_ElePhotonDrCut_, TTHLeptonictag_ElePhotonZMassCut_, TTHLeptonictag_DeltaRTrkEle_, 0);
-                }
-                if(Muons.size()+Electrons.size()>0)
-                    continue;
-            }
-                
+            if(leptonVeto_ && (Muons2018.size()+Electrons2018.size())>0)
+                continue;
 
             // find vertex associated to diphoton object
             size_t vtx = (size_t)dipho->jetCollectionIndex();
@@ -630,6 +597,7 @@ namespace flashgg {
                     ttHVars["Xtt1"] = 1000;
                 }
                 
+
                 edm::Handle<double>  rho;
                 evt.getByToken(rhoToken_,rho);
             
@@ -699,8 +667,6 @@ namespace flashgg {
                     ttHVars["etamu2"] = 0.;
                     ttHVars["phimu2"] = 0.;
                 }
-
-                if(leptonVeto_ && tagMuons.size()+tagElectrons.size()>0) continue;
 
                 ttHVars["fabs_CosThetaStar_CS"] = abs(tag_obj.getCosThetaStar_CS_old(6500));//FIXME don't do hardcoded
                 ttHVars["fabs_CosTheta_bb"] = abs(tag_obj.CosThetaAngles()[1]);

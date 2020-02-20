@@ -101,18 +101,6 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    deltaRPhoMuonThreshold = cms.double(0.5),
                                    deltaRJetLepThreshold = cms.double(0.4),
                                    LeptonVeto = cms.bool(True),
-                                   #FIXME i would like to import the following parameters directly from flashggTags_cff
-                                   ########################################
-                                   TTHLeptonictag_MuonEtaCut = cms.double(2.4),
-                                   TTHLeptonictag_MuonPtCut = cms.double(5),
-                                   TTHLeptonictag_MuonIsoCut = cms.double(0.25),
-                                   TTHLeptonictag_MuonPhotonDrCut = cms.double(0.2),
-                                   TTHLeptonictag_EleEtaCuts = cms.vdouble(1.4442,1.566,2.5),
-                                   TTHLeptonictag_ElePtCut = cms.double(10),
-                                   TTHLeptonictag_ElePhotonDrCut = cms.double(0.2),
-                                   TTHLeptonictag_ElePhotonZMassCut = cms.double(5),
-                                   TTHLeptonictag_DeltaRTrkEle = cms.double(0.35),
-                                   ########################################
                                    useElectronMVARecipe = cms.bool(False),
                                    useElectronLooseID = cms.bool(True),
                                    electronEtaThresholds=cms.vdouble(1.4442,1.566,2.5),

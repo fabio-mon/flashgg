@@ -34,6 +34,7 @@ namespace flashgg {
         float thirdMaxBTagVal() const {return thirdMaxBTagVal_;}
         float fourthMaxBTagVal() const {return fourthMaxBTagVal_;}
         float tthMvaRes() const {return tthMvaRes_;}
+        float mjj() const {return 0.;}
         void setNjet( int nb ) { Njet_ = nb; }
         void setNBLoose( int nb ) { Nbtagloose_ = nb; }
         void setNBMedium( int nb ) { Nbtagmedium_ = nb; }

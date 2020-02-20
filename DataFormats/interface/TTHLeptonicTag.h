@@ -48,6 +48,9 @@ namespace flashgg {
         int subleadMomMomID() const { return sublead_motherMotherID_; }
         int subleadPassFrix() const { return sublead_passFrix_; }
         double subleadSmallestDr() const { return sublead_smallestDr_; }
+        float mjj() const {return 0.;}
+        float leadJetPt() const {return 0.;}
+        float subLeadJetPt() const {return 0.;}
 
         void setJets( std::vector<edm::Ptr<Jet> > Jets ) { Jets_ = Jets; }
         void setBJets( std::vector<edm::Ptr<Jet> > BJets )  { BJets_ = BJets;}
