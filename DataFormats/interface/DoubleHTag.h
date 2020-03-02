@@ -79,10 +79,10 @@ namespace flashgg {
         float ptmu1() const {return ptmu1_;}
         float ptmu2() const {return ptmu2_;}
         float ptdipho() const {return ptdipho_;}
-        float ptjet1() const {return leadJet_.Pt();}
-        float ptjet2() const {return subleadJet_.Pt();}
-        float leadJetPt() const {return leadJet_.Pt();}
-        float subLeadJetPt() const {return subleadJet_.Pt();}
+        float ptjet1() const {return leadJet_->p4().pt();}
+        float ptjet2() const {return subleadJet_->p4().pt();}
+        float leadJetPt() const {return leadJet_->p4().pt();}
+        float subLeadJetPt() const {return subleadJet_->p4().pt();}
         float etajet1() const {return etajet1_;}
         float etajet2() const {return etajet2_;}
         float phijet1() const {return phijet1_;}

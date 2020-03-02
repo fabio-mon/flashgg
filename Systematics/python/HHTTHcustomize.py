@@ -21,9 +21,8 @@ class HHTTHcustomizer():
     def variablesToDump(self):
         variables = [
             'Mjj := mjj()',
-            'Mjj := mjj()',
             'leadJetPt:=leadJetPt()',
-            'subleadJetPt:=subleadJetPt()']
+            'subleadJetPt:=subLeadJetPt()']
 
         var_workspace = [
             "eventNumber := eventNumber()"]
@@ -43,12 +42,16 @@ class HHTTHcustomizer():
           'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',
           'Mjj[120,70,190] := mjj()',
           'leadJetPt[100,0,1000]:=leadJetPt()',
-          'subleadJetPt[100,10,300]:=subleadJetPt()']
+          'subleadJetPt[100,10,300]:=subLeadJetPt()']
 
       return systematicVariables
 
     def variablesToDumpData(self):
-        variables = []
+        variables = [            
+            'Mjj := mjj()',
+            'leadJetPt:=leadJetPt()',
+            'subleadJetPt:=subLeadJetPt()']
+
         if not(self.customize.dumpWorkspace):
             return self.variablesToDump()
         return variables
@@ -85,9 +88,9 @@ class HHTTHcustomizer():
             self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.26) #0.26
         elif training_type == 'wo_Mjj' :
             self.process.flashggDoubleHTag.MVAConfig.variables.pop(0) 
-            self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.30,0.54, 0.75)
-            self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 395.,470.,585.,250.,345.,375.,540.,250.,330.,375.,530.)
-            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.) #0.26
+            self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.37,0.62,0.78)
+            self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 385.,510.,600.,250.,330.,360.,540.,250.,330.,375.,585.)
+            self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.26) #0.26
 
         ## customize meta conditions
         self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))
@@ -237,7 +240,8 @@ class HHTTHcustomizer():
 
         ## define categories for gen-level dumper
         cfgTools.addCategory(self.process.genDiphotonDumper,  ## events with not reco-level tag
-                             "NoTag", 'isTagged("flashggNoTag")',1,#"NoTag", 'isTagged("NoTag")',0,
+                             #"NoTag", 'isTagged("flashggNoTag")',1,
+                             "NoTag", 'isTagged("NoTag")',0,
                              variables=genVariables)
 
         for tag in self.tagList: ## tagged events
