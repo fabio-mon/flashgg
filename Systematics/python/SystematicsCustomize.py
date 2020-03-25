@@ -146,10 +146,14 @@ def createJetSystematicsForBreg(process,options):
 
 
 def cloneTagSequenceForEachSystematic(process,systlabels=[],phosystlabels=[],metsystlabels=[],jetsystlabels=[],jetSystematicsInputTags=None,ZPlusJetMode=False):
+    print "----------------------"
+    print "----------------------"
+    print "clone tag sequence for each systematics"
     #process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags,ZPlusJetMode=False):
     if jetSystematicsInputTags is None:
         raise TypeError
     for systlabel in systlabels:
+        print "doing systlabel "+systlabel
         if systlabel == "":
             continue
         from PhysicsTools.PatAlgos.tools.helpers import cloneProcessingSnippet,massSearchReplaceAnyInputTag
@@ -165,6 +169,7 @@ def cloneTagSequenceForEachSystematic(process,systlabels=[],phosystlabels=[],met
             module = getattr(process,name)
             if hasattr(module,"SystLabel"):
                 module.SystLabel = systlabel
+
         process.systematicsTagSequences += newseq
         if ZPlusJetMode == 2:
             process.flashggSystTagMerger.src.append(cms.InputTag("flashggVBFTag" + systlabel))

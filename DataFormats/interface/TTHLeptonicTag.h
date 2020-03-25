@@ -85,6 +85,7 @@ namespace flashgg {
 
         void setMvaRes(float mvaRes) {mvaRes_ = mvaRes;}
         float mvaRes() const {return mvaRes_;}
+        double MVA() const { return mvaRes_; }
 
         private:
         std::vector<edm::Ptr<Muon> > Muons_;

@@ -12,6 +12,7 @@ class HHTTHcustomizer():
         self.metaConditions = metaConditions
         self.tagList = [ 
             ["NoTag",0],
+            ["UntaggedTag",4],
             ["TTHHadronicTag",4],
             ["TTHLeptonicTag",4],
             ["DoubleHTag",12]
@@ -22,7 +23,9 @@ class HHTTHcustomizer():
         variables = [
             'Mjj := mjj()',
             'leadJetPt:=leadJetPt()',
-            'subleadJetPt:=subLeadJetPt()']
+            'subleadJetPt:=subLeadJetPt()',
+            'HHbbggMVA := MVA()'
+]
 
         var_workspace = [
             "eventNumber := eventNumber()"]
@@ -42,7 +45,8 @@ class HHTTHcustomizer():
           'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',
           'Mjj[120,70,190] := mjj()',
           'leadJetPt[100,0,1000]:=leadJetPt()',
-          'subleadJetPt[100,10,300]:=subLeadJetPt()']
+          'subleadJetPt[100,10,300]:=subLeadJetPt()',
+          'HHbbggMVA := MVA()']
 
       return systematicVariables
 
@@ -50,7 +54,8 @@ class HHTTHcustomizer():
         variables = [            
             'Mjj := mjj()',
             'leadJetPt:=leadJetPt()',
-            'subleadJetPt:=subLeadJetPt()']
+            'subleadJetPt:=subLeadJetPt()',
+            'HHbbggMVA := MVA()']
 
         if not(self.customize.dumpWorkspace):
             return self.variablesToDump()
@@ -118,8 +123,7 @@ class HHTTHcustomizer():
         self.process.flashggTagSequence.remove(self.process.flashggVBFMVA)
         self.process.flashggTagSequence.remove(self.process.flashggVBFDiPhoDiJetMVA)
         self.process.flashggTagSequence.remove(self.process.flashggTTHDiLeptonTag)
-        self.process.flashggTagSequence.remove(self.process.flashggUntagged)
-        self.process.flashggTagSequence.remove(self.process.flashggUntagged)
+        #self.process.flashggTagSequence.remove(self.process.flashggUntagged)
         self.process.flashggTagSequence.remove(self.process.flashggTHQLeptonicTag)
         self.process.flashggTagSequence.remove(self.process.flashggDoubleHTag)
 
@@ -136,9 +140,10 @@ class HHTTHcustomizer():
              setattr(getattr(self.process, 'flashggTagSorter'+systlabel), 'TagPriorityRanges', cms.VPSet( 
                  cms.PSet(TagName = cms.InputTag('flashggDoubleHTag', systlabel)), 
                  cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag', systlabel)), 
-                 cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag', systlabel))) 
+                 cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag', systlabel)),
+                 cms.PSet(TagName = cms.InputTag('flashggUntagged'+systlabel))) 
              )
-            #print 'from loop after:',process.flashggSystTagMerger.src
+             print 'from loop after:',self.process.flashggSystTagMerger.src
 
 
     def customizeRunSequence(self,systlabels,jetsystlabels,phosystlabels,metsystlabels):
