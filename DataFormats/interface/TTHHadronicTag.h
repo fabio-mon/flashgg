@@ -34,6 +34,13 @@ namespace flashgg {
         float thirdMaxBTagVal() const {return thirdMaxBTagVal_;}
         float fourthMaxBTagVal() const {return fourthMaxBTagVal_;}
         float tthMvaRes() const {return tthMvaRes_;}
+        double MVA() const { return tthMvaRes_;}
+        float mjj() const {return 0.;}
+        float nMuons2018() const {return 0.;}
+        float nElectrons2018() const {return 0.;}
+        float genMhh() const {return 0.;}
+        float genCosThetaStar_CS() const {return 0.;}
+        float MX() const {return 0.;}
         void setNjet( int nb ) { Njet_ = nb; }
         void setNBLoose( int nb ) { Nbtagloose_ = nb; }
         void setNBMedium( int nb ) { Nbtagmedium_ = nb; }

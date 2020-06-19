@@ -71,7 +71,7 @@ namespace flashgg {
         float PhoJetMinDr() const {return PhoJetMinDr_;}
         float PhoJetOtherDr() const {return PhoJetOtherDr_;}
         float njets() const {return njets_;}
-        float mjj() const {return mjj_;}
+        float mjj() const {return dijet().M();}
         float Xtt0() const {return Xtt0_;}
         float Xtt1() const {return Xtt1_;}
         float pte1() const {return pte1_;}
@@ -81,6 +81,8 @@ namespace flashgg {
         float ptdipho() const {return ptdipho_;}
         float ptjet1() const {return ptjet1_;}
         float ptjet2() const {return ptjet2_;}
+        float leadJetPt() const {return leadJet_->p4().pt();}
+        float subLeadJetPt() const {return subleadJet_->p4().pt();}
         float etajet1() const {return etajet1_;}
         float etajet2() const {return etajet2_;}
         float phijet1() const {return phijet1_;}
