@@ -76,7 +76,8 @@ class HHTTHcustomizer():
                 "genMhh := genMhh()",
                 "genAbsCosThetaStar_CS := abs(genCosThetaStar_CS())"
             ]
-
+            if not customize.processId.count("2018"):
+                variables += ['weight("prefireProbabilityCentral")']
             
         var_workspace = variables
 
