@@ -12,8 +12,8 @@ class HHTTHcustomizer():
         self.metaConditions = metaConditions
         if customize.addVBFDoubleHTag:
             self.tagList = [ 
-                ["TTHHadronicTag",16],
-                ["TTHLeptonicTag",10],
+                ["TTHHadronicTag",4],
+                ["TTHLeptonicTag",4],
                 ["DoubleHTag",12],
                 ["VBFDoubleHTag",2]
             ]
