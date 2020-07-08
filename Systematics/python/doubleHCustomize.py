@@ -51,9 +51,9 @@ class DoubleHCustomize():
         variables = []
         if(self.customize.doubleHTagsOnly):
             var_workspace += [
-                "Mjj := dijet().M()",
+                "Mjj_noMReg := dijet().M()",
                 "eventNumber := eventNumber()",
-                "MX := MX()",
+                "MX_noMReg := MX()",
                 "leadingJet_pt := leadJet().pt",
                 "subleadingJet_pt := subleadJet().pt",
                 "HHbbggMVA := MVA()"
@@ -102,8 +102,8 @@ class DoubleHCustomize():
                 "PhoJetOtherDr := getPhoJetOtherDr()",
                 "HHbbggMVA := MVA()",
                 # "HHbbggMVAprob0 := MVAprob()[0]",
-                "MX := MX()",
-                "Mjj := dijet().M()",
+                "MX_noMReg := MX()",
+                "Mjj_noMReg := dijet().M()",
                 "dijet_pt := dijet().pt",
                 "dijet_eta := dijet().eta",
                 "dijet_phi := dijet().phi",
@@ -145,7 +145,17 @@ class DoubleHCustomize():
                 "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
                 "subleadingJet_bRegNNResolution := subleadJet().userFloat('bRegNNResolution')",
                 "sigmaMJets := getSigmaMOverMJets()"
-        ]
+        ]     
+        if self.customize.doMjjRegression: 
+            variables += [
+		"mass_corr := mass_corr()",
+		"Mjj := mass_corr()*dijet().M()",
+		"MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250" 
+            ]
+            var_workspace += [
+                "Mjj := mass_corr()*dijet().M()",
+                "MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250"
+            ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
                  variables += ["benchmark_reweight_%d := getBenchmarkReweight(%d)"%(num,num)]
@@ -222,7 +232,6 @@ class DoubleHCustomize():
 
       return systematicVariables
 
-
     def customizeSystematics(self,systlabels,jetsystlabels,metsystlabels):
        for s in metsystlabels:
           systlabels.remove(s)
@@ -285,23 +294,28 @@ class DoubleHCustomize():
         self.process.flashggVBFDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["VBFdoubleHTag"]["jetID"]))
         self.process.flashggVBFDoubleHTag.MVAscaling = cms.double(self.metaConditions["VBFdoubleHTag"]["MVAscalingValue"])
         self.process.flashggVBFDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggVBFDoubleHTag.doMassReg = cms.bool(self.customize.doMjjRegression)
         self.process.flashggVBFDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["ttHWeightfile"]))
         self.process.flashggVBFDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_mean"])
         self.process.flashggVBFDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_std"])
         self.process.flashggVBFDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_listmean"])
         self.process.flashggVBFDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_liststd"])
         self.process.flashggVBFDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+        self.process.flashggVBFDoubleHTag.MRegConf.weights = cms.FileInPath(str(self.metaConditions["MjjRegression"]["weightFile"]))
+        self.process.flashggVBFDoubleHTag.XYMETCorr_year = cms.uint32(self.metaConditions["MjjRegression"]["XYMETCorr_year"])
 
         self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))
         self.process.flashggDoubleHTag.MVAscaling = cms.double(self.metaConditions["doubleHTag"]["MVAscalingValue"])
         self.process.flashggDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggDoubleHTag.doMassReg = cms.bool(self.customize.doMjjRegression)
         self.process.flashggDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["ttHWeightfile"]))
         self.process.flashggDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_mean"])
         self.process.flashggDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_std"])
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
-
+        self.process.flashggDoubleHTag.MRegConf.weights = cms.FileInPath(str(self.metaConditions["MjjRegression"]["weightFile"]))
+        self.process.flashggDoubleHTag.XYMETCorr_year = cms.uint32(self.metaConditions["MjjRegression"]["XYMETCorr_year"])
         ## add double Higgs tag to the tag sequence
         #  self.process.flashggTagSequence.replace(self.process.flashggUntagged,(self.process.flashggDoubleHTag+self.process.flashggUntagged))
 
