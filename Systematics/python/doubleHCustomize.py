@@ -51,9 +51,9 @@ class DoubleHCustomize():
         variables = []
         if(self.customize.doubleHTagsOnly):
             var_workspace += [
-                "Mjj_noMReg := dijet().M()",
+            #    "Mjj_noMReg := dijet().M()",
                 "eventNumber := eventNumber()",
-                "MX_noMReg := MX()",
+            #    "MX_noMReg := MX()",
                 "leadingJet_pt := leadJet().pt",
                 "subleadingJet_pt := subleadJet().pt",
                 "HHbbggMVA := MVA()"
@@ -102,8 +102,8 @@ class DoubleHCustomize():
                 "PhoJetOtherDr := getPhoJetOtherDr()",
                 "HHbbggMVA := MVA()",
                 # "HHbbggMVAprob0 := MVAprob()[0]",
-                "MX_noMReg := MX()",
-                "Mjj_noMReg := dijet().M()",
+             #   "MX_noMReg := MX()",
+             #   "Mjj_noMReg := dijet().M()",
                 "dijet_pt := dijet().pt",
                 "dijet_eta := dijet().eta",
                 "dijet_phi := dijet().phi",
@@ -150,11 +150,13 @@ class DoubleHCustomize():
             variables += [
 		"mass_corr := mass_corr()",
 		"Mjj := mass_corr()*dijet().M()",
-		"MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250" 
+		#"MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250" 
+		"MX := MX()" 
             ]
             var_workspace += [
                 "Mjj := mass_corr()*dijet().M()",
-                "MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250"
+               # "MX := getdiHiggsP4().M()-mass_corr()*dijet().M()-diPhoton().mass+250"
+		          "MX := MX()" 
             ]
         if self.customize.doubleHReweight > 0: 
             for num in range(0,12):  #12 benchmarks + 1 SM
@@ -219,7 +221,7 @@ class DoubleHCustomize():
 
 
     def systematicVariables(self):
-      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',"ntagMuons[100,0.,10] := ntagMuons()","ntagElectrons[100,0.,10] := ntagElectrons()","nMuons2018[100,0.,10] := nMuons2018()","nElectrons2018[100,0.,10] := nElectrons2018()","leadingJet_pt[100,0,1000] := leadJet().pt","subleadingJet_pt[100,0,1000] := subleadJet().pt"]
+      systematicVariables=["CMS_hgg_mass[160,100,180]:=diPhoton().mass","Mjj[120,70,190]:=dijet().M()*mass_corr()","HHbbggMVA[100,0,1.]:=MVA()","MX[300,250,5000]:=MX()","eventNumber[40,0.,1000000.]:=eventNumber()","genMhh[300,250,5000]:=genMhh()","genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())",'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',"ntagMuons[100,0.,10] := ntagMuons()","ntagElectrons[100,0.,10] := ntagElectrons()","nMuons2018[100,0.,10] := nMuons2018()","nElectrons2018[100,0.,10] := nElectrons2018()","leadingJet_pt[100,0,1000] := leadJet().pt","subleadingJet_pt[100,0,1000] := subleadJet().pt"]
       
       if self.customize.doubleHReweight > 0: 
          for num in range(0,12):  #12 benchmarks

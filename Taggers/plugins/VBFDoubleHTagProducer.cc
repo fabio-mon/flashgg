@@ -676,7 +676,8 @@ namespace flashgg {
                     //if (tag_obj.dijet().mass()<mjjBoundaries_[0] || tag_obj.dijet().mass()>mjjBoundaries_[1]) continue;
 
                     // compute extra variables here
-                    tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
+                    if(doMassReg_)  tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass()*tag_obj.mass_corr_ - tag_obj.diPhoton()->mass() + 250. );
+                    else tag_obj.setMX( tag_obj.p4().mass() - tag_obj.dijet().mass() - tag_obj.diPhoton()->mass() + 250. );
                     tag_obj.setGenMhh( genMhh );
                     tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );
 
