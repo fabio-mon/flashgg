@@ -325,7 +325,7 @@ useEGMTools(process)
 
 # Only run systematics for signal events
 # convention: ggh vbf wzh (wh zh) tth
-signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","vbfhh","qqh","ggh","tth","vh"]
+signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","vbfhh","qqh","ggh","tth","vh","thq","thw"]
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 
 applyL1Prefiring = customizeForL1Prefiring(process, customize.metaConditions, customize.processId)
@@ -414,9 +414,9 @@ if customize.doDoubleHTag:
 
 if customize.HHTTHcustomize:
     variablesToUse = minimalVariables
-    if customize.processId == "Data":
-        variablesToUse = minimalNonSignalVariables
-        variablesToUse += HHTTHcustomizer.variablesToDumpData()
+#    if customize.processId == "Data":
+#        variablesToUse = minimalNonSignalVariables
+#        variablesToUse += HHTTHcustomizer.variablesToDumpData()
     systlabels,jetsystlabels,metsystlabels = HHTTHcustomizer.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
            
 

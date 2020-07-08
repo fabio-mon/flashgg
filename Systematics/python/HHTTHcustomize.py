@@ -76,8 +76,8 @@ class HHTTHcustomizer():
                 "genMhh := genMhh()",
                 "genAbsCosThetaStar_CS := abs(genCosThetaStar_CS())"
             ]
-            if not customize.processId.count("2018"):
-                variables += ['weight("prefireProbabilityCentral")']
+            if not self.customize.processId.count("2018"):
+                variables += ['prefireProbabilityWeight := weight("prefireProbabilityCentral")']
             
         var_workspace = variables
 
@@ -94,8 +94,8 @@ class HHTTHcustomizer():
           "nElectrons2018[100,0.,10] := nElectrons2018()",
           'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',
           'Mjj[120,70,190] := mjj()',
-          'leadJetPt[100,0,1000]:=leadJetPt()',
-          'subleadJetPt[100,10,300]:=subLeadJetPt()',
+          'leadJet_pt[100,0,1000]:=leadJetPt()',
+          'subleadJet_pt[100,10,300]:=subLeadJetPt()',
           "HHbbggMVA[100,0,1.]:=MVA()",
           "MX[300,250,5000]:=MX()",
           "genMhh[300,250,5000]:=genMhh()",
