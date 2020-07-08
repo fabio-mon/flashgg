@@ -7,7 +7,7 @@
 #include "flashgg/DataFormats/interface/Jet.h"
 #include "DataFormats/Candidate/interface/LeafCandidate.h"
 #include "DataFormats/Math/interface/deltaR.h"
-
+#include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/Taggers/interface/FunctionHelpers.h"
 
 namespace flashgg {
@@ -19,6 +19,7 @@ namespace flashgg {
         ~DoubleHTag();
 
         DoubleHTag( edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet> );
+        DoubleHTag( edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>, double, double, float );
         virtual DoubleHTag *clone() const override;
         /// DiPhotonTagBase::tag_t tagEnum() const override { return DiPhotonTagBase::kDoubleH; }
 
@@ -42,7 +43,9 @@ namespace flashgg {
 
         const flashgg::Jet & leadJet() const { return *leadJet_; } 
         const flashgg::Jet & subleadJet() const { return *subleadJet_; } 
-        
+        double RegMET() const {return RegMET_; }
+        double RegPhiMET() const {return RegPhiMET_; }
+        float sum_jetET() const {return sum_jetET_;}
         const LorentzVector & dijet() const { return dijet_; }
 
         float getCosThetaStar_CS() const;
@@ -53,6 +56,7 @@ namespace flashgg {
         float getPhoJetOtherDr() const;
         float getSigmaMDecorr() const;
         float getSigmaMOverMJets() const;
+        std::vector<double> getdPhi() const;
         void  setSigmaMDecorrTransf( DecorrTransform* transfEBEB, DecorrTransform* transfNotEBEB){ transfEBEB_= transfEBEB; transfNotEBEB_=transfNotEBEB;}
         LorentzVector getdiHiggsP4() const {return p4();}
         void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
@@ -62,7 +66,7 @@ namespace flashgg {
 
         float ttHScore_;
         float ntagMuons_, ntagElectrons_,nMuons2018_,nElectrons2018_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_,PhoJetOtherDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_, mass_corr_; 
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -99,7 +103,7 @@ namespace flashgg {
         float phidipho() const {return phidipho_;}
         float fabs_CosThetaStar_CS() const {return fabs_CosThetaStar_CS_;}
         float fabs_CosTheta_bb() const {return fabs_CosTheta_bb_;}
-
+        float mass_corr() const {return mass_corr_;}
 
     private:
         double mva_, MX_, genMhh_,genCosThetaStar_CS_;
@@ -107,6 +111,9 @@ namespace flashgg {
  //       std::vector<float> mva_prob_;
          long eventNumber_;
         edm::Ptr<flashgg::Jet> leadJet_, subleadJet_;
+        double RegMET_;
+        double RegPhiMET_;
+        float sum_jetET_;
         LorentzVector dijet_;
         DecorrTransform* transfEBEB_;
         DecorrTransform* transfNotEBEB_;

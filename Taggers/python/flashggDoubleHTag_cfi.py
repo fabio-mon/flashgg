@@ -23,6 +23,8 @@ ttHKiller_std = cms.vdouble()
 ttHKiller_listmean = cms.vdouble()
 ttHKiller_liststd = cms.vdouble()
 MaxJetEta = 2.5
+XYMETCorr_year = 2016
+MReg_weights=""
 
 flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    DiPhotonName = cms.string('flashggPreselectedDiPhotons'), # 
@@ -49,6 +51,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    BTagType = cms.vstring('mini_pfDeepFlavourJetTags:probb','mini_pfDeepFlavourJetTags:probbb','mini_pfDeepFlavourJetTags:problepb'), #string for btag algorithm
                                    UseJetID = cms.bool(True),
                                    JetIDLevel = cms.string(jetID),
+                                   XYMETCorr_year = cms.uint32(XYMETCorr_year),
 
                                    #MVABoundaries  = cms.vdouble(0.29,0.441, 0.724), # category boundaries for MVA w/o Mjj
                                    #MXBoundaries   = cms.vdouble(250., 354., 478., 560.), # .. and MX w/o Mjj
@@ -77,6 +80,7 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    doReweight = flashggDoubleHReweight.doReweight,
                                    reweight_producer = cms.string(reweight_settings.reweight_producer),
                                    reweight_names = cms.vstring(reweight_settings.reweight_names),
+
                                    #lepton info
                                    TTHLeptonictag_MuonEtaCut = flashggTTHLeptonicTag.MuonEtaCut,
                                    TTHLeptonictag_MuonPtCut = flashggTTHLeptonicTag.MuonPtCut,
@@ -89,6 +93,13 @@ flashggDoubleHTag = cms.EDProducer("FlashggDoubleHTagProducer",
                                    TTHLeptonictag_DeltaRTrkEle =flashggTTHLeptonicTag.DeltaRTrkEle ,
 
                                    dottHTagger=cms.bool(False), #whether to do ttH killer. 
+                                    # for mass regression ####
+                                   doMassReg=cms.bool(False),
+                                   MRegConf=cms.PSet(variables=cms.VPSet(),
+                                                     classifier=cms.string("BDT::bdt"),
+                                                     weights=cms.FileInPath("%s"%MReg_weights),
+                                                     regression=cms.bool(True),
+                                                 ),
 
                                    ElectronTag=cms.InputTag('flashggSelectedElectrons'),
                                    MuonTag=cms.InputTag('flashggSelectedMuons'),
@@ -132,15 +143,49 @@ cfgTools.addVariables(flashggDoubleHTag.MVAConfig.variables,
                        "sigmaMOverM := sqrt(0.5*(diPhoton.leadingPhoton.sigEOverE*diPhoton.leadingPhoton.sigEOverE + diPhoton.subLeadingPhoton.sigEOverE*diPhoton.subLeadingPhoton.sigEOverE))",
                        "(leadingPhoton_pt/CMS_hgg_mass) := diPhoton.leadingPhoton.pt/diPhoton().mass",
                        "(subleadingPhoton_pt/CMS_hgg_mass) := diPhoton.subLeadingPhoton.pt/diPhoton().mass",
-                       "(leadingJet_pt/Mjj) := leadJet().pt/dijet().mass",
-                       "(subleadingJet_pt/Mjj) := subleadJet().pt/dijet().mass",
+                       "(leadingJet_pt/Mjj) := leadJet().pt/(dijet().mass*mass_corr())",
+                       "(subleadingJet_pt/Mjj) := subleadJet().pt/(dijet().mass*mass_corr())",
                        "rho := global.rho",
                        "(leadingJet_bRegNNResolution*1.4826) := leadJet().userFloat('bRegNNResolution')*1.4826",
                        "(subleadingJet_bRegNNResolution*1.4826) := subleadJet().userFloat('bRegNNResolution')*1.4826",
-                       "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826",
+                       "(sigmaMJets*1.4826) := getSigmaMOverMJets()*1.4826/(mass_corr()*mass_corr())",
                        "PhoJetMinDr := getPhoJetMinDr()",
                        "PhoJetOtherDr := getPhoJetOtherDr()" 
                        ]
                       )
+# for Mjj regression only
+if flashggDoubleHTag.XYMETCorr_year == 2016:
+    MReg_year = 16
+elif flashggDoubleHTag.XYMETCorr_year == 2017:
+    MReg_year = 17
+elif flashggDoubleHTag.XYMETCorr_year == 2018:
+    MReg_year = 18
+
+cfgTools.addVariables(flashggDoubleHTag.MRegConf.variables,
+                      [
+                          "leadingJet_pt := leadJet().pt",
+                          "leadingJet_eta := leadJet().eta",
+                          "leadingJet_mass := leadJet().p4().M()",
+                          "leadingJet_e := leadJet().energy",
+                          "leadingJet_phi := leadJet().phi",
+                          "leadingJet_DeepFlavour := leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+leadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
+                          "leadingJet_bRegNNCorr := leadJet().userFloat('bRegNNCorr')",
+                          "subleadingJet_pt := subleadJet().pt",
+                          "subleadingJet_eta := subleadJet().eta",
+                          "subleadingJet_mass := subleadJet().p4().M()",
+                          "subleadingJet_e := subleadJet().energy",
+                          "subleadingJet_phi := subleadJet().phi",
+                          "subleadingJet_DeepFlavour := subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:probbb')+subleadJet().bDiscriminator('mini_pfDeepFlavourJetTags:problepb')",
+                          "subleadingJet_bRegNNCorr := subleadJet().userFloat('bRegNNCorr')",
+                          "corrMET := RegMET()",
+                          "corrMETPhi := RegPhiMET()",
+                          "MjjReg_phi12 := abs(getdPhi()[0])",
+                          "MjjReg_phi1M := abs(getdPhi()[1])",
+                          "MjjReg_phi2M := abs(getdPhi()[2])",
+                          "rho := global.rho",
+                          "ttH_sumET := sum_jetET()-leadJet().pt-subleadJet().pt",
+                          "year := %i"%(MReg_year)
+                      ]
+                    )
 
 
