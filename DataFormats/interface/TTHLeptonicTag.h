@@ -49,6 +49,7 @@ namespace flashgg {
         int subleadPassFrix() const { return sublead_passFrix_; }
         double subleadSmallestDr() const { return sublead_smallestDr_; }
         float mjj() const {return 0.;}
+        float mjj_corr() const {return 0.;}
         float leadJetPt() const {return 0.;}
         float subLeadJetPt() const {return 0.;}        
         float nMuons2018() const {return 0.;}

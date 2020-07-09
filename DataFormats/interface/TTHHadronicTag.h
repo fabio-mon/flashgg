@@ -36,6 +36,7 @@ namespace flashgg {
         float tthMvaRes() const {return tthMvaRes_;}
         double MVA() const { return tthMvaRes_;}
         float mjj() const {return 0.;}
+        float mjj_corr() const {return 0.;}
         float nMuons2018() const {return 0.;}
         float nElectrons2018() const {return 0.;}
         float genMhh() const {return 0.;}

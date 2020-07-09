@@ -60,7 +60,6 @@ class HHTTHcustomizer():
     def variablesToDump(self):
         variables = []
         variables += [
-            "Mjj := mjj()",
 #            "eventNumber := eventNumber()",
             "MX := MX()",
             "leadJet_pt := leadJetPt()",
@@ -69,6 +68,10 @@ class HHTTHcustomizer():
             "nElectrons2018[100,0.,10] := nElectrons2018()",
             "HHbbggMVA := MVA()"
         ]
+        if self.customize.doMjjRegression: 
+            variables += ["Mjj := mjj_corr()"]
+        else:
+            variables += ["Mjj := mjj()"]
 
         if self.customize.processId != "Data":
             variables += [
@@ -93,7 +96,6 @@ class HHTTHcustomizer():
           "nMuons2018[100,0.,10] := nMuons2018()",
           "nElectrons2018[100,0.,10] := nElectrons2018()",
           'btagReshapeWeight[100,-10.,10]:=weight("JetBTagReshapeWeightCentral")',
-          'Mjj[120,70,190] := mjj()',
           'leadJet_pt[100,0,1000]:=leadJetPt()',
           'subleadJet_pt[100,10,300]:=subLeadJetPt()',
           "HHbbggMVA[100,0,1.]:=MVA()",
@@ -101,6 +103,11 @@ class HHTTHcustomizer():
           "genMhh[300,250,5000]:=genMhh()",
           "genAbsCosThetaStar_CS[100,0,1]:=abs(genCosThetaStar_CS())"
       ]
+      if self.customize.doMjjRegression: 
+          systematicVariables+=['Mjj[120,70,190] := mjj_corr()']
+      else:
+          systematicVariables+=['Mjj[120,70,190] := mjj()']
+
       return systematicVariables
 
     def customizeSystematics(self,systlabels,jetsystlabels,metsystlabels):
@@ -162,23 +169,28 @@ class HHTTHcustomizer():
         self.process.flashggVBFDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["VBFdoubleHTag"]["jetID"]))
         self.process.flashggVBFDoubleHTag.MVAscaling = cms.double(self.metaConditions["VBFdoubleHTag"]["MVAscalingValue"])
         self.process.flashggVBFDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggVBFDoubleHTag.doMassReg = cms.bool(self.customize.doMjjRegression)
         self.process.flashggVBFDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["ttHWeightfile"]))
         self.process.flashggVBFDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_mean"])
         self.process.flashggVBFDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_std"])
         self.process.flashggVBFDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_listmean"])
         self.process.flashggVBFDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_liststd"])
         self.process.flashggVBFDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+        self.process.flashggVBFDoubleHTag.MRegConf.weights = cms.FileInPath(str(self.metaConditions["MjjRegression"]["weightFile"]))
+        self.process.flashggVBFDoubleHTag.XYMETCorr_year = cms.uint32(self.metaConditions["MjjRegression"]["XYMETCorr_year"])
 
         self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))
         self.process.flashggDoubleHTag.MVAscaling = cms.double(self.metaConditions["doubleHTag"]["MVAscalingValue"])
         self.process.flashggDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggDoubleHTag.doMassReg = cms.bool(self.customize.doMjjRegression)
         self.process.flashggDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["ttHWeightfile"]))
         self.process.flashggDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_mean"])
         self.process.flashggDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_std"])
         self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
         self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
         self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
-
+        self.process.flashggDoubleHTag.MRegConf.weights = cms.FileInPath(str(self.metaConditions["MjjRegression"]["weightFile"]))
+        self.process.flashggDoubleHTag.XYMETCorr_year = cms.uint32(self.metaConditions["MjjRegression"]["XYMETCorr_year"])
 
         # remove all tags from the default tag sequence
         self.process.flashggTagSequence.remove(self.process.flashggVBFTag)

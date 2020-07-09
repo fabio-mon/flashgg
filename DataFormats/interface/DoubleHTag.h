@@ -76,6 +76,7 @@ namespace flashgg {
         float PhoJetOtherDr() const {return PhoJetOtherDr_;}
         float njets() const {return njets_;}
         float mjj() const {return dijet().M();}
+        float mjj_corr() const {return mass_corr()*dijet().M();}
         float Xtt0() const {return Xtt0_;}
         float Xtt1() const {return Xtt1_;}
         float pte1() const {return pte1_;}
