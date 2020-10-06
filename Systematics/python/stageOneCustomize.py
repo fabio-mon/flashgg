@@ -41,13 +41,17 @@ class StageOneCustomize():
             ["RECO_TTH_LEP_PTH_60_120_Tag0",0], ["RECO_TTH_LEP_PTH_60_120_Tag1",0],
             ["RECO_TTH_LEP_PTH_120_200_Tag0",0], ["RECO_TTH_LEP_PTH_120_200_Tag1",0],
             ["RECO_TTH_LEP_PTH_GT200_Tag0",0], ["RECO_TTH_LEP_PTH_GT200_Tag1",0],
-            ["RECO_THQ_LEP",0]
+            ["RECO_THQ_LEP",0],
+            ["RECO_GGHH_Tag0",0], ["RECO_GGHH_Tag1",0], ["RECO_GGHH_Tag2",0], ["RECO_GGHH_Tag3",0], ["RECO_GGHH_Tag4",0], ["RECO_GGHH_Tag5",0], ["RECO_GGHH_Tag6",0], ["RECO_GGHH_Tag7",0], ["RECO_GGHH_Tag8",0], ["RECO_GGHH_Tag9",0], ["RECO_GGHH_Tag10",0], ["RECO_GGHH_Tag11",0],
+            ["RECO_VBFHH_Tag0",0], ["RECO_VBFHH_Tag1",0]
         ]
         if self.customize.processId == "Data": 
             self.tagList.pop(1) ## remove NoTag for data
         self.stageOneVariable = ["stage1p2bin[57,-8.5,48.5] := tagTruth().HTXSstage1p2orderedBin"]
         self.tagPriorityRanges = cms.VPSet(
-	          cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag')),
+            cms.PSet(TagName = cms.InputTag('flashggVBFDoubleHTag')),
+            cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
+            cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag')),
             cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
             cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
             cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
@@ -110,6 +114,8 @@ class StageOneCustomize():
         self.process.flashggTagSequence.remove(self.process.flashggVBFDiPhoDiJetMVA)
         #self.process.flashggTagSequence.remove(self.process.flashggTHQLeptonicTag) ## now included in analysis
         self.process.flashggTagSequence.remove(self.process.flashggTTHDiLeptonTag)
+        self.process.flashggTagSequence.remove(self.process.flashggVBFDoubleHTag)  ## will be added back in later
+        self.process.flashggTagSequence.remove(self.process.flashggDoubleHTag)     ## will be added back in later
         self.process.flashggTagSequence.remove(self.process.flashggTTHLeptonicTag) ## will be added back in later
         self.process.flashggTagSequence.remove(self.process.flashggTTHHadronicTag) ## will be added back in later
         #self.process.flashggTagSequence.remove(self.process.flashggVHMetTag)      ## now included in analysis
