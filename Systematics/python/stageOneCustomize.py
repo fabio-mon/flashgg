@@ -10,6 +10,7 @@ class StageOneCustomize():
         self.customize = customize
         self.metaConditions = metaConditions
         self.modifyForttH = True
+        self.modifyForHH = True
         self.tagList = [
             ["LOGICERROR",0], ["NOTAG",0], 
             ["RECO_0J_PTH_0_10_Tag0",0], ["RECO_0J_PTH_0_10_Tag1",0], ["RECO_0J_PTH_0_10_Tag2",0],
@@ -49,8 +50,8 @@ class StageOneCustomize():
             self.tagList.pop(1) ## remove NoTag for data
         self.stageOneVariable = ["stage1p2bin[57,-8.5,48.5] := tagTruth().HTXSstage1p2orderedBin"]
         self.tagPriorityRanges = cms.VPSet(
-            cms.PSet(TagName = cms.InputTag('flashggVBFDoubleHTag')),
-            cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
+#            cms.PSet(TagName = cms.InputTag('flashggVBFDoubleHTag')),
+#            cms.PSet(TagName = cms.InputTag('flashggDoubleHTag')),
             cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag')),
             cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag')), 
             cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
@@ -109,6 +110,7 @@ class StageOneCustomize():
 
     def customizeTagSequence(self):
         self.process.load("flashgg.Taggers.flashggStageOneCombinedTag_cfi")
+        self.process.load("flashgg.Taggers.flashggDoubleHTag_cff")
 
         ## remove unneeded tags
         self.process.flashggTagSequence.remove(self.process.flashggVBFDiPhoDiJetMVA)
@@ -164,7 +166,9 @@ class StageOneCustomize():
             self.process.p.remove(getattr(self.process, 'flashggTagSorter' + systlabel))
             self.process.p.replace(self.process.flashggSystTagMerger, getattr(self.process, 'flashggTagSorter' + systlabel) * self.process.flashggSystTagMerger)
             modifiedPriorityRanges = cms.VPSet(
-	              cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag'+systlabel)),
+#                cms.PSet(TagName = cms.InputTag('flashggVBFDoubleHTag', systlabel)),
+#                cms.PSet(TagName = cms.InputTag('flashggDoubleHTag', systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag'+systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag', systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag'+systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag'+systlabel)),
@@ -173,3 +177,96 @@ class StageOneCustomize():
                 cms.PSet(TagName = cms.InputTag('flashggStageOneCombinedTag'+systlabel))
             )
             setattr(getattr(self.process, 'flashggTagSorter'+systlabel), 'TagPriorityRanges', modifiedPriorityRanges)
+
+    def customizeSystematicsforHH(self, systlabels, phosystlabels, metsystlabels):
+
+        for s in metsystlabels:
+            systlabels.remove(s)
+        metsystlabels = []
+        if self.metaConditions['bRegression']['useBRegressionJERsf'] :
+            for s in jetsystlabels:
+                if "JER" in s :
+                    systlabels.remove(s)
+                    jetsystlabels.remove(s)
+                if self.customize.doSystematics:
+                    for direction in ["Up","Down"]:
+                        jetsystlabels.append("JERbreg%s01sigma" % direction)
+                        systlabels.append("JERbreg%s01sigma" % direction)
+
+        return systlabels, phosystlabels, metsystlabels
+
+
+    def modifyWorkflowForHH(self, systlabels, phosystlabels, metsystlabels, jetsystlabels):
+        training_type =  'wo_Mjj' 
+        self.process.flashggDoubleHTag.MVAConfig.weights=cms.FileInPath(str(self.metaConditions["doubleHTag"]["weightsFile"][training_type]))  
+        self.process.flashggDoubleHTag.MVAFlatteningFileName = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["MVAFlatteningFileName"][training_type]))
+        self.process.flashggDoubleHTag.MVAConfig.variables.pop(0) 
+        self.process.flashggDoubleHTag.MVABoundaries = cms.vdouble(0.37,0.62,0.78)
+        self.process.flashggDoubleHTag.MXBoundaries = cms.vdouble(250., 385.,510.,600.,250.,330.,360.,540.,250.,330.,375.,585.)
+        self.process.flashggDoubleHTag.ttHScoreThreshold = cms.double(0.26) #0.26
+
+        self.process.flashggVBFDoubleHTag.MVAConfigCAT0.weights=cms.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["weightsFileCAT0"][training_type]))
+        self.process.flashggVBFDoubleHTag.MVAFlatteningFileNameCAT0 = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["MVAFlatteningFileNameCAT0"][training_type]))
+        self.process.flashggVBFDoubleHTag.MVAConfigCAT1.weights=cms.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["weightsFileCAT1"][training_type]))
+        self.process.flashggVBFDoubleHTag.MVAFlatteningFileNameCAT1 = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["MVAFlatteningFileNameCAT1"][training_type]))
+
+        #self.process.flashggVBFDoubleHTag.MVAConfig.variables.pop(0)
+        #self.process.flashggVBFDoubleHTag.MVABoundaries = cms.vdouble(0.70)
+        #self.process.flashggVBFDoubleHTag.ttHScoreThreshold = cms.double(0.26)
+        self.process.flashggVBFDoubleHTag.MVAConfigCAT0.variables.pop(0)
+        self.process.flashggVBFDoubleHTag.MVAConfigCAT1.variables.pop(0)
+        self.process.flashggVBFDoubleHTag.MVABoundaries = cms.vdouble(0.52,0.86) #CAT0 MX > 500, CAT1 :MX <=500
+        self.process.flashggVBFDoubleHTag.MXBoundaries = cms.vdouble(0.,500.)
+        self.process.flashggVBFDoubleHTag.nMX = cms.uint32(2)
+        self.process.flashggVBFDoubleHTag.ttHScoreThreshold = cms.double(0.26)
+
+        ## customize meta conditions
+        self.process.flashggVBFDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["VBFdoubleHTag"]["jetID"]))
+        self.process.flashggVBFDoubleHTag.MVAscaling = cms.double(self.metaConditions["VBFdoubleHTag"]["MVAscalingValue"])
+        self.process.flashggVBFDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggVBFDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["VBFdoubleHTag"]["ttHWeightfile"]))
+        self.process.flashggVBFDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_mean"])
+        self.process.flashggVBFDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_std"])
+        self.process.flashggVBFDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_listmean"])
+        self.process.flashggVBFDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["VBFdoubleHTag"]["ttHKiller_liststd"])
+        self.process.flashggVBFDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+
+        self.process.flashggDoubleHTag.JetIDLevel=cms.string(str(self.metaConditions["doubleHTag"]["jetID"]))
+        self.process.flashggDoubleHTag.MVAscaling = cms.double(self.metaConditions["doubleHTag"]["MVAscalingValue"])
+        self.process.flashggDoubleHTag.dottHTagger = cms.bool(self.customize.doDoubleHttHKiller)
+        self.process.flashggDoubleHTag.ttHWeightfile = cms.untracked.FileInPath(str(self.metaConditions["doubleHTag"]["ttHWeightfile"]))
+        self.process.flashggDoubleHTag.ttHKiller_mean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_mean"])
+        self.process.flashggDoubleHTag.ttHKiller_std = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_std"])
+        self.process.flashggDoubleHTag.ttHKiller_listmean = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_listmean"])
+        self.process.flashggDoubleHTag.ttHKiller_liststd = cms.vdouble(self.metaConditions["doubleHTag"]["ttHKiller_liststd"])
+        self.process.flashggDoubleHTag.MaxJetEta = cms.double(self.metaConditions["bTagSystematics"]["eta"])
+
+        #modify tag sequence for HH tags 
+        self.process.p.remove(self.process.flashggTagSorter)
+        self.process.p.replace(self.process.flashggSystTagMerger,self.process.flashggDoubleHTagSequence*self.process.flashggTagSorter*self.process.flashggSystTagMerger)
+
+        for systlabel in systlabels:
+            if systlabel!='':
+                self.process.p.remove(getattr(self.process,'flashggTagSorter'+systlabel))
+                self.process.p.replace(self.process.flashggSystTagMerger,getattr(self.process, 'flashggTagSorter'+systlabel)*self.process.flashggSystTagMerger)
+            setattr(getattr(self.process, 'flashggTagSorter'+systlabel), 'TagPriorityRanges', cms.VPSet( 
+#                cms.PSet(TagName = cms.InputTag('flashggVBFDoubleHTag', systlabel)),
+#                cms.PSet(TagName = cms.InputTag('flashggDoubleHTag', systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggTHQLeptonicTag'+systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag', systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag'+systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag'+systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag', systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggVHMetTag'+systlabel)),
+                cms.PSet(TagName = cms.InputTag('flashggStageOneCombinedTag'+systlabel))
+            )) 
+                 
+            #print 'from loop after:',self.process.flashggSystTagMerger.src
+
+        if len(systlabels)>1 :
+            getattr(self.process, "flashggDoubleHTag").JetsSuffixes = cms.vstring([systlabels[0]]+jetsystlabels)
+            getattr(self.process, "flashggDoubleHTag").DiPhotonSuffixes = cms.vstring([systlabels[0]]+phosystlabels)
+            getattr(self.process, "flashggVBFDoubleHTag").JetsSuffixes = cms.vstring([systlabels[0]]+jetsystlabels)
+            getattr(self.process, "flashggVBFDoubleHTag").DiPhotonSuffixes = cms.vstring([systlabels[0]]+phosystlabels)
+            getattr(self.process, "flashggVBFDoubleHTag").VBFJetsSuffixes = cms.vstring([systlabels[0]]+jetsystlabels)
+

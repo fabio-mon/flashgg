@@ -263,6 +263,34 @@ string DiPhotonTagBase::stage1KinematicLabel() const {
         return string("RECO_TTH_HAD_PTH_GT200_Tag3");
     case stage1recoTag::RECO_THQ_LEP:
         return string("RECO_THQ_LEP");
+    case stage1recoTag::RECO_GGHH_Tag0:
+        return string("RECO_GGHH_Tag0");
+    case stage1recoTag::RECO_GGHH_Tag1:
+        return string("RECO_GGHH_Tag1");
+    case stage1recoTag::RECO_GGHH_Tag2:
+        return string("RECO_GGHH_Tag2");
+    case stage1recoTag::RECO_GGHH_Tag3:
+        return string("RECO_GGHH_Tag3");
+    case stage1recoTag::RECO_GGHH_Tag4:
+        return string("RECO_GGHH_Tag4");
+    case stage1recoTag::RECO_GGHH_Tag5:
+        return string("RECO_GGHH_Tag5");
+    case stage1recoTag::RECO_GGHH_Tag6:
+        return string("RECO_GGHH_Tag6");
+    case stage1recoTag::RECO_GGHH_Tag7:
+        return string("RECO_GGHH_Tag7");
+    case stage1recoTag::RECO_GGHH_Tag8:
+        return string("RECO_GGHH_Tag8");
+    case stage1recoTag::RECO_GGHH_Tag9:
+        return string("RECO_GGHH_Tag9");
+    case stage1recoTag::RECO_GGHH_Tag10:
+        return string("RECO_GGHH_Tag10");
+    case stage1recoTag::RECO_GGHH_Tag11:
+        return string("RECO_GGHH_Tag11");
+    case stage1recoTag::RECO_VBFHH_Tag0:
+        return string("RECO_VBFHH_Tag0");
+    case stage1recoTag::RECO_VBFHH_Tag1:
+        return string("RECO_VBFHH_Tag1");
     default:
         break;
     }

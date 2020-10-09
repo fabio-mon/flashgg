@@ -417,7 +417,9 @@ if customize.HHTTHcustomize:
         variablesToUse = minimalNonSignalVariables
         variablesToUse += HHTTHcustomizer.variablesToDumpData()
     systlabels,jetsystlabels,metsystlabels = HHTTHcustomizer.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
-           
+
+if customize.doStageOne:
+   systlabels,jetsystlabels,metsystlabels = soc.customizeSystematicsforHH(systlabels,jetsystlabels,metsystlabels)        
 
 print "--- Systematics  with independent collections ---"
 print systlabels
@@ -663,6 +665,7 @@ else:
                          process.tagsDumper)
     if customize.doStageOne: 
         if soc.modifyForttH: soc.modifyWorkflowForttH(systlabels, phosystlabels, metsystlabels, jetsystlabels)
+        if soc.modifyForHH: soc.modifyWorkflowForHH(systlabels, phosystlabels, metsystlabels, jetsystlabels)
 
 if customize.doBJetRegression:
 

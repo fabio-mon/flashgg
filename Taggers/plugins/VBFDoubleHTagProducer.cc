@@ -49,6 +49,7 @@ namespace flashgg {
         bool isclose(double a, double b, double rel_tol, double abs_tol);        
         void StandardizeHLF();
         void StandardizeParticleList();
+        int ConvertToStage1Tag( const int &catnum );
         
         std::string inputJetsName_;
         std::vector<std::string> inputJetsSuffixes_;
@@ -947,9 +948,9 @@ namespace flashgg {
                     tag_obj.includeWeightsByLabel( *leadJet ,"JetBTagReshapeWeight");
                     tag_obj.includeWeightsByLabel( *subleadJet , "JetBTagReshapeWeight" );
 
-
-
                     if (catnum>-1){
+                        int stage1Tag = ConvertToStage1Tag( catnum );
+                        tag_obj.setStage1recoTag( stage1Tag );
                         if (doCategorization_) {
                             if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
                         }
@@ -1021,6 +1022,20 @@ namespace flashgg {
         float NNscore = outputs[0].matrix<float>()(0, 0);
         return NNscore;
     }
+
+
+    int VBFDoubleHTagProducer::ConvertToStage1Tag( const int &catNum )
+    {
+        int chosenTag_ = DiPhotonTagBase::stage1recoTag::LOGICERROR;
+        if ( catNum == 0 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_VBFHH_Tag0;
+        }
+        else if ( catNum == 1 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_VBFHH_Tag1;
+        }
+        return chosenTag_;
+    }
+
     
 }
 

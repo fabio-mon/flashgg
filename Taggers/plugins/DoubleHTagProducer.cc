@@ -45,6 +45,7 @@ namespace flashgg {
         bool isclose(double a, double b, double rel_tol, double abs_tol);        
         void StandardizeHLF();
         void StandardizeParticleList();
+        int ConvertToStage1Tag( const int &catnum );
         
         std::string inputJetsName_;
         std::vector<std::string> inputJetsSuffixes_;
@@ -799,6 +800,7 @@ namespace flashgg {
             int catnum = chooseCategory( tag_obj.MVA(), tag_obj.MX() );
             tag_obj.setCategoryNumber( catnum );
             tag_obj.includeWeights( *dipho );
+
             //tag_obj.includeWeights( *leadJet );
             //tag_obj.includeWeights( *subleadJet );
             
@@ -810,6 +812,8 @@ namespace flashgg {
 
 
           if (catnum>-1){
+                int stage1Tag = ConvertToStage1Tag( catnum );
+                tag_obj.setStage1recoTag( stage1Tag );
                 if (doCategorization_) {
                     if (tag_obj.dijet().mass()<mjjBoundariesLower_[catnum] || tag_obj.dijet().mass()>mjjBoundariesUpper_[catnum]) continue;
                 }
@@ -888,7 +892,50 @@ namespace flashgg {
         return NNscore;
     }
     
+    int DoubleHTagProducer::ConvertToStage1Tag( const int &catNum )
+    {
+        int chosenTag_ = DiPhotonTagBase::stage1recoTag::LOGICERROR;
+        if ( catNum == 0 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag0;
+        }
+        else if ( catNum == 1 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag1;
+        }
+        else if ( catNum == 2 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag2;
+        }
+        else if ( catNum == 3 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag3;
+        }
+        else if ( catNum == 4 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag4;
+        }
+        else if ( catNum == 5 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag5;
+        }
+        else if ( catNum == 6 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag6;
+        }
+        else if ( catNum == 7 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag7;
+        }
+        else if ( catNum == 8 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag8;
+        }
+        else if ( catNum == 9 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag9;
+        }
+        else if ( catNum == 10 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag10;
+        }
+        else if ( catNum == 11 ) {
+            chosenTag_ = DiPhotonTagBase::stage1recoTag::RECO_GGHH_Tag11;
+        }
+        return chosenTag_;
+    }
 }
+
+
 
 typedef flashgg::DoubleHTagProducer FlashggDoubleHTagProducer;
 DEFINE_FWK_MODULE( FlashggDoubleHTagProducer );
