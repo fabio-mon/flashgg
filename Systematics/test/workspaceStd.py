@@ -280,6 +280,7 @@ if customize.doDoubleHTag:
     import flashgg.Systematics.doubleHCustomize 
     hhc = flashgg.Systematics.doubleHCustomize.DoubleHCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhc.variablesToDump()
+    minimalNonSignalVariables += hhc.variablesToDump() #hcc knows whether it is data or MC 
     systematicVariables = hhc.systematicVariables()
 
 if customize.doStageOne:
@@ -405,8 +406,8 @@ else:
 
 if customize.doubleHTagsOnly:
     variablesToUse = minimalVariables
-   # if customize.processId == "Data":
-   #     variablesToUse = minimalNonSignalVariables
+    if customize.processId == "Data":
+        variablesToUse = minimalNonSignalVariables
   
 if customize.doDoubleHTag:
    systlabels,jetsystlabels,metsystlabels = hhc.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
@@ -495,18 +496,34 @@ elif customize.doStageOne:
     tagList = soc.tagList
 else:
     tagList=[
-        ["NoTag",0],
-        ["UntaggedTag",4],
-        ["VBFTag",3],
-        ["ZHLeptonicTag",2],
-        ["WHLeptonicTag",6],
-        ["VHMetTag",2],
-        ["VHHadronicTag",0],
-        ["TTHHadronicTag",4],
-        ["TTHLeptonicTag",4],
-        ["THQLeptonicTag",0],
-        ["TTHDiLeptonTag",0]
+#        ["NoTag",0],
+        ["UntaggedTag",4]
+#        ["VBFTag",3],
+#        ["ZHLeptonicTag",2],
+#        ["WHLeptonicTag",6],
+#        ["VHMetTag",2],
+#        ["VHHadronicTag",0],
+#        ["TTHHadronicTag",4],
+#        ["TTHLeptonicTag",4],
+#        ["THQLeptonicTag",0],
+#        ["TTHDiLeptonTag",0]
         ]
+    tag_only_variables["UntaggedTag"] = [
+        "leadingGenEnergy := diPhoton.leadingPhoton.matchedGenPhoton.energy",
+        "leadingPhotonEnergy := diPhoton.leadingPhoton.energy",
+        "leadingPhotonPt := diPhoton.leadingPhoton.pt",
+        "leadingPhotonEta := diPhoton.leadingPhoton.eta",
+        "leadingPhotonregression1Energy := diPhoton.leadingPhoton.energyCorrections().regression1Energy",
+        "leadingPhotonphoEcalEnergy := diPhoton.leadingPhoton.energyCorrections().phoEcalEnergy",
+        "leadingPhotonphoSCEnergy := diPhoton.leadingPhoton.energyCorrections().scEcalEnergy",
+        "subleadingGenEnergy := diPhoton.subLeadingPhoton.matchedGenPhoton.energy",
+        "subleadingPhotonEnergy := diPhoton.subLeadingPhoton.energy",
+        "subleadingPhotonPt := diPhoton.subLeadingPhoton.pt",
+        "subleadingPhotonEta := diPhoton.subLeadingPhoton.eta",
+        "subleadingPhotonregression1Energy := diPhoton.subLeadingPhoton.energyCorrections().regression1Energy",
+        "subleadingPhotonphoEcalEnergy := diPhoton.subLeadingPhoton.energyCorrections().phoEcalEnergy",
+        "subleadingPhotonphoSCEnergy := diPhoton.subLeadingPhoton.energyCorrections().scEcalEnergy"]
+
 
 definedSysts=set()
 process.tagsDumper.classifierCfg.remap=cms.untracked.VPSet()

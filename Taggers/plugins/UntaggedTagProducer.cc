@@ -85,9 +85,12 @@ namespace flashgg {
             tag_obj.setSystLabel( systLabel_ );
 
             int catnum = chooseCategory( mvares->result );
-            tag_obj.setCategoryNumber( catnum );
+            tag_obj.setCategoryNumber( 0 );
 
             tag_obj.includeWeights( *dipho );
+
+            
+
 
             bool passScaledPtCuts = 1;
             if ( requireScaledPtCuts_ ) {
@@ -99,7 +102,27 @@ namespace flashgg {
                 //                std::cout << " pt_over_mgg_1=" << pt_over_mgg_1 << " pt_over_mgg_2=" << pt_over_mgg_2 << " passScaledPtCuts=" << passScaledPtCuts << std::endl;
             }
 
-            if( passScaledPtCuts && tag_obj.categoryNumber() >= 0 ) {
+            //if( passScaledPtCuts && tag_obj.categoryNumber() >= 0 ) {
+            if( passScaledPtCuts && dipho->leadingPhoton()->hasMatchedGenPhoton()) {
+                /*
+                if(dipho->leadingPhoton()->hasMatchedGenPhoton())
+                    cout<<"dipho->leadingPhoton()->matchedGenPhoton()->energy()"<< 
+                        dipho->leadingPhoton()->matchedGenPhoton()->energy()<<endl;
+
+                cout<<"dipho->leadingPhoton()->energy()="<<dipho->leadingPhoton()->energy()<<endl;
+                cout<<"dipho->leadingPhoton()->pt() * cosh(dipho->leadingPhoton()->eta())="<<
+                    dipho->leadingPhoton()->energy() * cosh(dipho->leadingPhoton()->eta())  <<endl;
+
+                cout<<"dipho->leadingPhoton()->energyCorrections().scEcalEnergy="<<
+                    dipho->leadingPhoton()->energyCorrections().scEcalEnergy<<endl;  
+                cout<<"dipho->leadingPhoton()->energyCorrections().phoEcalEnergy="<<
+                    dipho->leadingPhoton()->energyCorrections().phoEcalEnergy<<endl;  
+                cout<<"dipho->leadingPhoton()->energyCorrections().regression1Energy="<<
+                    dipho->leadingPhoton()->energyCorrections().regression1Energy<<endl;  
+                cout<<"dipho->leadingPhoton()->energyCorrections().regression2Energy="<<
+                    dipho->leadingPhoton()->energyCorrections().regression2Energy<<endl;  
+                getchar();
+                */
                 tags->push_back( tag_obj );
             }
         }

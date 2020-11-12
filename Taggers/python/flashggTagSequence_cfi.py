@@ -38,17 +38,17 @@ def flashggPrepareTagSequence(process, options):
                                       * flashggVBFDiPhoDiJetMVA
                                       * ( flashggUntagged
                                       #                                  *( flashggSigmaMoMpToMTag
-                                          + flashggVBFTag
-                                          + flashggTTHDiLeptonTag
-                                          + flashggTTHLeptonicTag
-                      + flashggTHQLeptonicTag
+#                                          + flashggVBFTag
+#                                          + flashggTTHDiLeptonTag
+#                                          + flashggTTHLeptonicTag
+#                      + flashggTHQLeptonicTag
 #                                     + flashggTTHHadronicTTag                                      
 #                                     + flashggTTHHadronicLTag                                      
-                                          + flashggTTHHadronicTag
-                                          + flashggVHMetTag
-                                          + flashggWHLeptonicTag
-                                          + flashggZHLeptonicTag
-                                          + flashggVHHadronicTag
+#                                          + flashggTTHHadronicTag
+#                                          + flashggVHMetTag
+#                                          + flashggWHLeptonicTag
+#                                          + flashggZHLeptonicTag
+#                                          + flashggVHHadronicTag
                                       )
                                       * flashggTagSorter
                                   )
