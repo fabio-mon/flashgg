@@ -36,7 +36,6 @@ class StageOneCustomize():
             ["RECO_WH_LEP_LOW_Tag0",0], ["RECO_WH_LEP_LOW_Tag1",0], ["RECO_WH_LEP_LOW_Tag2",0], 
             ["RECO_WH_LEP_HIGH_Tag0",0], ["RECO_WH_LEP_HIGH_Tag1",0], ["RECO_WH_LEP_HIGH_Tag2",0], 
             ["RECO_ZH_LEP_Tag0",0], ["RECO_ZH_LEP_Tag1",0],
-            ["RECO_VH_MET_Tag0",0], ["RECO_VH_MET_Tag1",0],
             ["RECO_TTH_LEP_PTH_0_60_Tag0",0], ["RECO_TTH_LEP_PTH_0_60_Tag1",0], ["RECO_TTH_LEP_PTH_0_60_Tag2",0], ["RECO_TTH_LEP_PTH_0_60_Tag3",0],
             ["RECO_TTH_LEP_PTH_60_120_Tag0",0], ["RECO_TTH_LEP_PTH_60_120_Tag1",0],
             ["RECO_TTH_LEP_PTH_120_200_Tag0",0], ["RECO_TTH_LEP_PTH_120_200_Tag1",0],
@@ -52,19 +51,15 @@ class StageOneCustomize():
             cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag')),
             cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag')),
             cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag')),   
-            cms.PSet(TagName = cms.InputTag('flashggVHMetTag')),
             cms.PSet(TagName = cms.InputTag('flashggStageOneCombinedTag'))
         )
         self.customizeTagSequence()
 
 
     def variablesToDump(self):
-        ws_variables = []
-        ws_variables += self.stageOneVariable 
-        ws_variables += [
+        ws_variables = self.stageOneVariable + [
             "CMS_hgg_mass[160,100,180]:=diPhoton().mass",
             "dZ[40,-20.,20.]:=(tagTruth().genPV().z-diPhoton().vtx().z)",
-            "NNLOPSweight[1,-999999.,999999.] := tagTruth().weight(\"NNLOPSweight\")",
             "centralObjectWeight[1,-999999.,999999.] := centralWeight"
         ]
 
@@ -80,16 +75,13 @@ class StageOneCustomize():
 
 
     def systematicVariables(self):
-        systematicVariables = [] 
-        systematicVariables += self.stageOneVariable 
-        systematicVariables += [
+        systematicVariables = self.stageOneVariable + [
             "CMS_hgg_mass[160,100,180]:=diPhoton().mass"
         ]
         return systematicVariables
 
     def noTagVariables(self):
-        noTagVariables = []
-        noTagVariables += self.stageOneVariable
+        noTagVariables = self.stageOneVariable
         for direction in ["Up","Down"]:
             noTagVariables.append("THU_ggH_Mu%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mu%s01sigma\")" % (direction,direction))
             noTagVariables.append("THU_ggH_Res%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Res%s01sigma\")" % (direction,direction))
@@ -112,7 +104,7 @@ class StageOneCustomize():
         self.process.flashggTagSequence.remove(self.process.flashggTTHDiLeptonTag)
         self.process.flashggTagSequence.remove(self.process.flashggTTHLeptonicTag) ## will be added back in later
         self.process.flashggTagSequence.remove(self.process.flashggTTHHadronicTag) ## will be added back in later
-        #self.process.flashggTagSequence.remove(self.process.flashggVHMetTag)      ## now included in analysis
+        self.process.flashggTagSequence.remove(self.process.flashggVHMetTag)
         #self.process.flashggTagSequence.remove(self.process.flashggZHLeptonicTag) ## now included in analysis
         #self.process.flashggTagSequence.remove(self.process.flashggWHLeptonicTag) ## now included in analysis
         self.process.flashggTagSequence.remove(self.process.flashggVHLeptonicLooseTag)
@@ -163,7 +155,6 @@ class StageOneCustomize():
                 cms.PSet(TagName = cms.InputTag('flashggZHLeptonicTag'+systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggWHLeptonicTag'+systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag', systlabel)),
-                cms.PSet(TagName = cms.InputTag('flashggVHMetTag'+systlabel)),
                 cms.PSet(TagName = cms.InputTag('flashggStageOneCombinedTag'+systlabel))
             )
             setattr(getattr(self.process, 'flashggTagSorter'+systlabel), 'TagPriorityRanges', modifiedPriorityRanges)

@@ -50,8 +50,7 @@ cp $CMSSW_BASE/src/flashgg/MicroAOD/data/QGL_AK4chs_94X.db $CMSSW_BASE/src/flash
 # EGamma post reco tools for energy scales and smearings
 echo "Settinga up Scales and Smearings form EGM"
 git cms-addpkg RecoEgamma/EgammaTools
-### Switch to my fork until the old format UL17 S+S files are uploaded in the main repo
-git clone https://github.com/rchatter/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data
+git clone https://github.com/cms-data/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data
 cd EgammaAnalysis/ElectronTools/data
 cd $CMSSW_BASE/src
 git apply flashgg/EnergyScaleCorrection.patch
